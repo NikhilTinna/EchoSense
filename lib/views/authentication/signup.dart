@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:social_media/views/authentication/signup.dart';
+import 'package:social_media/views/authentication/login.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class Signup extends StatefulWidget {
+  const Signup({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<Signup> createState() => _SignupState();
 }
 
-class _LoginState extends State<Login> {
+class _SignupState extends State<Signup> {
   final formkey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final nameController = TextEditingController();
+  final usernameController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +24,7 @@ class _LoginState extends State<Login> {
         preferredSize: const Size.fromHeight(0),
         child: AppBar(
             systemOverlayStyle: SystemUiOverlayStyle(
-                statusBarColor: Theme.of(context).colorScheme.background)),
+                statusBarColor: Theme.of(context).colorScheme.primary)),
       ),
       backgroundColor: Theme.of(context).colorScheme.background,
       body: SingleChildScrollView(
@@ -29,26 +32,13 @@ class _LoginState extends State<Login> {
             margin: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
             child: Column(
               children: [
-                Center(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 10),
-                    width: 70, // Set the desired width for your container
-                    height: 110, // Set the desired height for your container
-
-                    child: Image.asset(
-                      'assets/images/logo.png', // Replace with the path to your image
-                      fit: BoxFit
-                          .fill, // Use BoxFit.fill to force the image to fill the container
-                    ),
-                  ),
-                ),
                 SizedBox(
                   height: Get.height * 0.07,
                 ),
                 Row(
                   children: [
                     Text(
-                      "  Login",
+                      "  Create Account",
                       style: Theme.of(context).textTheme.displayLarge,
                     ),
                   ],
@@ -63,6 +53,60 @@ class _LoginState extends State<Login> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Text(
+                            " Name",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          TextFormField(
+                            controller: nameController,
+                            decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                    width: 1, color: Colors.black),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                    width: 1, color: Colors.grey),
+                              ),
+                              contentPadding: const EdgeInsets.all(10),
+                              hintText: "Enter name",
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            " Username",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          TextFormField(
+                            controller: usernameController,
+                            decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                    width: 1, color: Colors.black),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                    width: 1, color: Colors.grey),
+                              ),
+                              contentPadding: const EdgeInsets.all(10),
+                              hintText: "Enter Username",
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
                           Text(
                             " Email",
                             style: Theme.of(context).textTheme.bodySmall,
@@ -116,7 +160,7 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                           const SizedBox(
-                            height: 15,
+                            height: 10,
                           ),
                           Center(
                             child: SizedBox(
@@ -128,7 +172,7 @@ class _LoginState extends State<Login> {
                                   ),
                                   onPressed: () {},
                                   child: Text(
-                                    "Login",
+                                    "Create Account",
                                     style:
                                         Theme.of(context).textTheme.bodyMedium,
                                   )),
@@ -141,7 +185,7 @@ class _LoginState extends State<Login> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const Text(
-                                "Don't have an account? ",
+                                "Already have an account? ",
                                 style:
                                     TextStyle(fontSize: 14, color: Colors.grey),
                               ),
@@ -149,11 +193,11 @@ class _LoginState extends State<Login> {
                                 onTap: () {
                                   Navigator.pushReplacement(context,
                                       MaterialPageRoute(builder: (context) {
-                                    return const Signup();
+                                    return const Login();
                                   }));
                                 },
                                 child: const Text(
-                                  "Create one ",
+                                  "Login ",
                                   style: TextStyle(
                                       fontSize: 14, color: Colors.blue),
                                 ),
