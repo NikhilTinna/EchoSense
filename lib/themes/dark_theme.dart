@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
     colorScheme: const ColorScheme.dark(
         background: Color(0xff15202B),
-        primary: Colors.white,
-        secondary: Color(0xff8B98A5),
+        primary: Color(0xff242037),
+        secondary: Colors.purple,
         error: Colors.red,
         errorContainer: Colors.yellow),
     scaffoldBackgroundColor: Colors.grey[900],
@@ -15,10 +16,19 @@ ThemeData darkTheme = ThemeData(
     primarySwatch: Colors.indigo,
     iconTheme: const IconThemeData(color: Colors.indigo),
     indicatorColor: Colors.indigo,
-    textTheme: const TextTheme(
-      displayLarge: TextStyle(fontSize: 24, color: Color(0xff8B98A5)),
-      bodyLarge: TextStyle(color: Colors.black), // Body text color
-      bodySmall: TextStyle(color: Colors.grey),
+    textTheme: TextTheme(
+      displayLarge: GoogleFonts.roboto(
+        textStyle: const TextStyle(
+            fontSize: 28, color: Colors.white, fontWeight: FontWeight.w700),
+      ),
+      bodyMedium: GoogleFonts.roboto(
+        textStyle: const TextStyle(
+            fontSize: 20, color: Colors.white, fontWeight: FontWeight.w500),
+      ),
+      bodySmall: GoogleFonts.roboto(
+        textStyle: const TextStyle(
+            fontSize: 16, color: Colors.grey, fontWeight: FontWeight.w400),
+      ),
     ),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
       backgroundColor: Colors.black, // FAB background color
