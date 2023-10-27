@@ -22,9 +22,4 @@ app.use("/user",userRouter)
 app.use("/posts",postRouter)
 app.use("/comments",commentRouter)
 
-
-
-
-
-
 app.listen(3000, () => {});

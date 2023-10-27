@@ -1,7 +1,6 @@
 const express = require("express");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
+const verifyJWT=require("../utilities/verify_jwt")
 
 const postRouter = express.Router();
 const prisma = new PrismaClient();
@@ -16,12 +15,12 @@ postRouter.get("/:id",async(req,res)=>{
     res.json(posts)
 })
 
-postRouter.post("",async(req,res)=>{
+postRouter.post("",verifyJWT,async(req,res)=>{
     const newPost=await prisma.post.create({data:req.body})
     res.json(newPost)
 })
 
-postRouter.post("/reply",async(req,res)=>{
+postRouter.post("/reply",verifyJWT,async(req,res)=>{
     const newPost=await prisma.post.create({data:req.body})
     res.json(newPost)
 })

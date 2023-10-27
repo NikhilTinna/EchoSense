@@ -1,7 +1,6 @@
 const express = require("express");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
+const verifyJWT=require("../utilities/verify_jwt")
 
 const commentRouter = express.Router();
 const prisma = new PrismaClient();
@@ -13,7 +12,7 @@ commentRouter.get("/:id",async(req,res)=>{
     res.json(posts)
 })
 
-commentRouter.post("",async(req,res)=>{
+commentRouter.post("",verifyJWT,async(req,res)=>{
     const newComment=await prisma.comment.create({data:req.body})
     res.json(newComment)
 })

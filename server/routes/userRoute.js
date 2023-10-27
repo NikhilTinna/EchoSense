@@ -2,9 +2,11 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
+require("dotenv").config()
 
 const userRouter = express.Router();
 const prisma = new PrismaClient();
+
 
 userRouter.post("/signup", async (req, res) => {
   try {
@@ -25,7 +27,10 @@ userRouter.post("/signup", async (req, res) => {
     const newUser = await prisma.user.create({ data:{
         name,username,email,password:hashedpassword
     } });
-    res.json(newUser);
+
+    const token=jwt.sign(newUser,process.env.SECRET_KEY)
+
+    res.json(token);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -52,7 +57,12 @@ userRouter.post("/signin", async (req, res) => {
       return res.status(400).json({ msg: "Incorrect password" });
     }
 
-    return res.json(user);
+  
+    const token=jwt.sign(user,process.env.SECRET_KEY)
+
+    res.json(token);
+
+  
   } catch (e) {}
 });
 
