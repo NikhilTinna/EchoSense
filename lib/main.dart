@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:social_media/constants/global.dart';
+import 'package:social_media/controllers/authController.dart';
 import 'package:social_media/themes/dark_theme.dart';
 import 'package:social_media/themes/light_theme.dart';
 import 'package:social_media/views/authentication/login.dart';
+import 'package:social_media/views/main/home.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  AuthController authController = Get.put(AuthController());
+  SharedPreferences sp = await SharedPreferences.getInstance();
+  if (sp.getString("token") != null) {
+    String? id = sp.getString("token");
+    authController.decodedToken.value = JwtDecoder.decode(id!);
+    authController.userId.value = sp.getString("token")!;
+    print(authController.decodedToken.value);
+  }
   runApp(const MainApp());
 }
 
@@ -17,6 +30,7 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
+  AuthController authController = Get.put(AuthController());
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -24,6 +38,6 @@ class _MainAppState extends State<MainApp> {
         theme: lightTheme,
         darkTheme: darkTheme,
         themeMode: ThemeMode.system,
-        home: Login());
+        home: authController.userId.isEmpty ? Login() : Home());
   }
 }

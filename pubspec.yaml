@@ -11,6 +11,10 @@ dependencies:
     sdk: flutter
   get:
   google_fonts:
+  shared_preferences:
+  jwt_decoder:
+  fluttertoast:
+  http: ^1.1.0
 
 dev_dependencies:
   flutter_test:

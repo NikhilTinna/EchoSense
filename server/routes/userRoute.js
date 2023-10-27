@@ -12,6 +12,17 @@ userRouter.post("/signup", async (req, res) => {
   try {
     const { name, username, email, password } = req.body;
 
+    const existingUsername = await prisma.user.findFirst({
+      where: {
+        username,
+      },
+    });
+    if (existingUsername) {
+      return res
+        .status(400)
+        .json({ msg: "Username is already taken!" });
+    }
+
     const existingUser = await prisma.user.findFirst({
       where: {
         email,
