@@ -9,6 +9,7 @@ import 'package:social_media/themes/light_theme.dart';
 import 'package:social_media/views/authentication/login.dart';
 import 'package:social_media/views/authentication/otp.dart';
 import 'package:social_media/views/main/home.dart';
+import 'package:social_media/views/main/navigation_bar.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,6 +42,6 @@ class _MainAppState extends State<MainApp> {
         theme: lightTheme,
         darkTheme: darkTheme,
         themeMode: ThemeMode.system,
-        home: authController.token.isNotEmpty ? Home() : Login());
+        home: authController.token.isNotEmpty ? UserNavigationBar() : Login());
   }
 }

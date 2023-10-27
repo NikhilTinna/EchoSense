@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_media/views/main/home.dart';
+import 'package:social_media/views/main/navigation_bar.dart';
 import '../../constants/REST_api.dart';
 import '../../constants/toast.dart';
 import '../../controllers/authController.dart';
@@ -53,6 +54,7 @@ class _OTPState extends State<OTP> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: SafeArea(
         child: Container(
           margin: EdgeInsets.only(
@@ -135,7 +137,7 @@ class _OTPState extends State<OTP> {
                           authController.token.value = sp.getString("token")!;
                           Navigator.pushReplacement(context,
                               MaterialPageRoute(builder: (context) {
-                            return Home();
+                            return UserNavigationBar();
                           }));
                         }
                       }

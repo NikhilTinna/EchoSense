@@ -5,4 +5,6 @@ class AuthController extends GetxController {
   RxString userId = "".obs;
   Rx<Map<String, dynamic>> decodedToken = Rx<Map<String, dynamic>>({});
   Rx<Map<String, dynamic>> unverifiedUser = Rx<Map<String, dynamic>>({});
+
+  RxInt userIndex = 0.obs;
 }
