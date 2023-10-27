@@ -4,7 +4,6 @@ require("dotenv").config()
 
 const verifyJWT=(req,res,next)=>{
     const token=req.headers["x-auth-token"]
-    console.log(token)
     if(typeof token!=="undefined")
     {
       const bearer=token.split(" ")
@@ -13,7 +12,7 @@ const verifyJWT=(req,res,next)=>{
       jwt.verify(req.token,process.env.SECRET_KEY,(err,authData)=>{
         if(err)
         {
-          res.json("invalid token")
+          res.status(400).json("invalid token")
         }
         else{
           next()
@@ -24,7 +23,7 @@ const verifyJWT=(req,res,next)=>{
 
     }
     else{
-      res.send({result:"Token is not valid"})
+      res.status(400).json({msg:"Token is not valid"})
     }
   }
 

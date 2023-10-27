@@ -1,9 +1,15 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:social_media/constants/REST_api.dart';
+import 'package:social_media/constants/global.dart';
 import 'package:social_media/constants/toast.dart';
+import 'package:http/http.dart' as http;
+import 'package:social_media/controllers/authController.dart';
 
 class AddPost extends StatefulWidget {
   const AddPost({super.key});
@@ -35,6 +41,7 @@ class _AddPostState extends State<AddPost> {
       body: SafeArea(
           child: Container(
               margin: EdgeInsets.only(
+                  top: 10,
                   left: Get.width * 0.025,
                   right: Get.width * 0.025,
                   bottom: 15),
@@ -42,7 +49,7 @@ class _AddPostState extends State<AddPost> {
                   ? Stack(
                       children: [
                         Positioned(
-                          top: Get.height * 0.3,
+                          top: Get.height * 0.27,
                           left: 0,
                           right: 0,
                           child: TextField(
@@ -80,7 +87,7 @@ class _AddPostState extends State<AddPost> {
                             left: 0,
                             right: 0,
                             child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () async {},
                                 child: const Text("Add post")))
                       ],
                     )
@@ -155,7 +162,31 @@ class _AddPostState extends State<AddPost> {
                             left: 0,
                             right: 0,
                             child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () async {
+                                  AuthController authController =
+                                      Get.put(AuthController());
+                                  var stream =
+                                      http.ByteStream(postImage!.openRead());
+                                  stream.cast();
+                                  print(postImage!.path);
+
+                                  var length = await postImage!.length();
+                                  http.MultipartRequest res =
+                                      http.MultipartRequest('POST',
+                                          Uri.parse("$url/posts/image"));
+                                  res.fields["description"] =
+                                      textController.text;
+                                  res.fields["userId"] =
+                                      authController.userId.value;
+                                  res.headers["x-auth-token"] =
+                                      "bearer " + authController.token.value;
+                                  var multiport =
+                                      await http.MultipartFile.fromPath(
+                                          "image", postImage!.path.toString());
+
+                                  res.files.add(multiport);
+                                  await res.send();
+                                },
                                 child: const Text("Add post")))
                       ],
                     ))),

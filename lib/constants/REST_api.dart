@@ -21,7 +21,9 @@ Future<http.Response> post(
     body: body,
     headers: <String, String>{
       'Content-Type': "application/json; charset=UTF-8",
-      "x-auth-token": isImportant ? authController.token.value : ""
+      "x-auth-token": isImportant
+          ? "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJlMjBjZGM0LTRhMjMtNDQ5Yy1hZWYzLTkwMzk0NmJmZTk1NCIsIm5hbWUiOiJqa2xqIiwidXNlcm5hbWUiOiJrbGpsa2prbGprbGoiLCJlbWFpbCI6InFhYmR1bDg0NEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYSQwOCRrMVZDL0Z5SEZmSW1HZ3dHVjFIZ1NlU1hmdFprcnUyM3BIbndUYXhmRHBtY2UvS2RvaUt0RyIsImNyZWF0ZWRBdCI6IjIwMjMtMTAtMjdUMTU6MTI6MjQuNjgwWiIsInVwZGF0ZWRBdCI6IjIwMjMtMTAtMjdUMTU6MTI6MjQuNjgwWiIsImlhdCI6MTY5ODQxOTU0NH0.u6o-9BOlmFBO4Kdy6DC11rc3-rQSZ52hgX07JLe2v2s"
+          : ""
     },
   );
   print(res);
