@@ -7,6 +7,7 @@ import 'package:social_media/controllers/authController.dart';
 import 'package:social_media/themes/dark_theme.dart';
 import 'package:social_media/themes/light_theme.dart';
 import 'package:social_media/views/authentication/login.dart';
+import 'package:social_media/views/authentication/otp.dart';
 import 'package:social_media/views/main/home.dart';
 
 void main() async {
@@ -16,9 +17,10 @@ void main() async {
   if (sp.getString("token") != null) {
     String? id = sp.getString("token");
     authController.decodedToken.value = JwtDecoder.decode(id!);
-    authController.userId.value = sp.getString("token")!;
-    print(authController.decodedToken.value);
+    authController.token.value = sp.getString("token")!;
+    authController.userId.value = authController.decodedToken.value["id"];
   }
+
   runApp(const MainApp());
 }
 
@@ -31,6 +33,7 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> {
   AuthController authController = Get.put(AuthController());
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -38,6 +41,6 @@ class _MainAppState extends State<MainApp> {
         theme: lightTheme,
         darkTheme: darkTheme,
         themeMode: ThemeMode.system,
-        home: authController.userId.isEmpty ? Login() : Home());
+        home: authController.token.isNotEmpty ? Home() : Login());
   }
 }

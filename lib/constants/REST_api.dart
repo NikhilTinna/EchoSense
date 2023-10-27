@@ -21,7 +21,7 @@ Future<http.Response> post(
     body: body,
     headers: <String, String>{
       'Content-Type': "application/json; charset=UTF-8",
-      "x-auth-token": isImportant ? authController.userId.value : ""
+      "x-auth-token": isImportant ? authController.token.value : ""
     },
   );
   print(res);

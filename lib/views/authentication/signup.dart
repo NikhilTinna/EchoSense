@@ -11,6 +11,7 @@ import 'package:social_media/constants/toast.dart';
 
 import 'package:social_media/views/authentication/login.dart';
 import 'package:http/http.dart' as http;
+import 'package:social_media/views/authentication/otp.dart';
 
 import '../../controllers/authController.dart';
 
@@ -184,7 +185,7 @@ class _SignupState extends State<Signup> {
                                   onPressed: () async {
                                     http.Response res = await post(
                                         endpoint:
-                                            "http://10.0.2.2:3000/user/signup",
+                                            "http://10.0.2.2:3000/user/verify",
                                         body: jsonEncode({
                                           "name": nameController.text,
                                           "username": usernameController.text,
@@ -193,21 +194,24 @@ class _SignupState extends State<Signup> {
                                         }),
                                         success: () {
                                           showSuccessToast(
-                                              "Account Created Successfully");
+                                              "An OTP has been sent to your email");
                                         },
                                         isImportant: false);
-                                    SharedPreferences sp =
-                                        await SharedPreferences.getInstance();
-                                    sp.setString("token", res.body);
-                                    AuthController authController =
-                                        Get.put(AuthController());
-                                    authController.decodedToken.value =
-                                        JwtDecoder.decode(
-                                            sp.getString("token")!);
-                                    authController.userId.value =
-                                        sp.getString("token")!;
-                                    print(authController.decodedToken.value);
-                                    print(authController.userId);
+                                    if (res.statusCode == 200) {
+                                      SharedPreferences sp =
+                                          await SharedPreferences.getInstance();
+                                      sp.setBool("isVerified", false);
+                                      AuthController authController =
+                                          Get.put(AuthController());
+                                      authController.unverifiedUser.value = {
+                                        "name": nameController.text,
+                                        "username": usernameController.text,
+                                        "email": emailController.text,
+                                        "password": passwordController.text
+                                      };
+                                      sp.setString("otp", res.body);
+                                      Get.to(OTP());
+                                    }
                                   },
                                   child: Text(
                                     "Create Account",

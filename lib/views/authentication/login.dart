@@ -1,7 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_media/views/authentication/signup.dart';
+
+import '../../constants/REST_api.dart';
+import '../../constants/toast.dart';
+import '../../controllers/authController.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -126,7 +135,32 @@ class _LoginState extends State<Login> {
                                     primary:
                                         Theme.of(context).colorScheme.secondary,
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    http.Response res = await post(
+                                        endpoint:
+                                            "http://10.0.2.2:3000/user/signin",
+                                        body: jsonEncode({
+                                          "email": emailController.text,
+                                          "password": passwordController.text
+                                        }),
+                                        success: () {
+                                          showSuccessToast(
+                                              "logged in Successfully");
+                                        },
+                                        isImportant: false);
+                                    if (res.statusCode == 200) {
+                                      SharedPreferences sp =
+                                          await SharedPreferences.getInstance();
+                                      sp.setString("token", res.body);
+                                      AuthController authController =
+                                          Get.put(AuthController());
+                                      authController.decodedToken.value =
+                                          JwtDecoder.decode(
+                                              sp.getString("token")!);
+                                      authController.token.value =
+                                          sp.getString("token")!;
+                                    }
+                                  },
                                   child: Text(
                                     "Login",
                                     style:

@@ -15,7 +15,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text(authController.userId.value),
+      body: Text(authController.token.value),
     );
   }
 }
