@@ -101,13 +101,16 @@ class _ImagePostListState extends State<ImagePostList> {
                             height: 10,
                           ),
                           Container(
-                            margin: const EdgeInsets.only(
-                                top: 3, bottom: 3, left: 1.5, right: 1.5),
-                            child: Image.network(
-                              widget.images[index][
-                                  "imageurl"], // Replace with the path to your image
-                              fit: BoxFit
-                                  .fill, // Use BoxFit.fill to force the image to fill the container
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10)),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.network(
+                                widget.images[index][
+                                    "imageurl"], // Replace with the path to your image
+                                fit: BoxFit
+                                    .fill, // Use BoxFit.fill to force the image to fill the container
+                              ),
                             ),
                           ),
                           SizedBox(

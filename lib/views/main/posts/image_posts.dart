@@ -24,9 +24,6 @@ class _ImagePostsState extends State<ImagePosts> {
         });
       }
     }
-    setState(() {
-      imagePosts.sort((a, b) => (b['createdAt']).compareTo(a['createdAt']));
-    });
 
     for (var element in imagePosts) {
       print(element["createdAt"]);

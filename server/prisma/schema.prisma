@@ -19,6 +19,8 @@ model User {
   updatedAt DateTime  @updatedAt
   UserPost  Post[]    @relation("PostCreator")
   Comment   Comment[] @relation("CommentCreator")
+  Reply     Reply[]   @relation("ReplyCreator")
+  Like      Like[]    @relation("UserLike")
 }
 
 model Post {
@@ -33,6 +35,8 @@ model Post {
   quotedPostId String?
   Post         Post[]    @relation("QuotedPost")
   Comment      Comment[] @relation("PostChild")
+  Reply        Reply[]   @relation("PostReply")
+  Like         Like[]    @relation("PostLike")
 }
 
 model Comment {
@@ -44,4 +48,34 @@ model Comment {
   userId      String
   post        Post     @relation("PostChild", fields: [postId], references: [id])
   postId      String
+  Reply       Reply[]  @relation("CommentReply")
+  Like        Like[]   @relation("CommentLike")
+}
+
+model Reply {
+  id          String   @id @default(uuid())
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation("ReplyCreator", fields: [userId], references: [id])
+  userId      String
+  post        Post     @relation("PostReply", fields: [postId], references: [id])
+  postId      String
+  comment     Comment  @relation("CommentReply", fields: [commentId], references: [id])
+  commentId   String
+  Like        Like[]   @relation("ReplyLike")
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation("UserLike", fields: [userId], references: [id])
+   userId    String
+  postId    String?
+  post      Post?    @relation("PostLike", fields: [postId], references: [id])
+  commentId String?
+  comment   Comment? @relation("CommentLike", fields: [commentId], references: [id])
+  replyId   String?
+  reply     Reply?   @relation("ReplyLike", fields: [replyId], references: [id])
 }
