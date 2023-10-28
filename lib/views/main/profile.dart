@@ -115,181 +115,174 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                     child: CircularProgressIndicator(
                     color: Colors.grey,
                   ))
-                : ListView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: [
-                      SafeArea(
-                        child: Container(
-                          margin: const EdgeInsets.only(
-                            top: 12,
-                          ),
-                          child: Container(
-                            margin: EdgeInsets.only(
-                              left: Get.width * 0.025,
-                              right: Get.width * 0.025,
-                            ),
-                            child: Column(
+                : SafeArea(
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        top: 12,
+                      ),
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          left: Get.width * 0.025,
+                          right: Get.width * 0.025,
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    userController.currentUserData
-                                                .value["picture"] ==
-                                            null
-                                        ? const CircleAvatar(
-                                            radius: 35,
-                                            backgroundColor: Colors.white,
-                                            backgroundImage: AssetImage(
-                                                "assets/images/profile_picture.png"),
-                                          )
-                                        : CircleAvatar(
-                                            radius: 35,
-                                            backgroundColor: Colors.white,
-                                            backgroundImage: NetworkImage(
-                                                userController.currentUserData
-                                                    .value["picture"]),
-                                          ),
-                                    SizedBox(
-                                      width: Get.width * 0.1,
-                                    ),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Text(
-                                              "23",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium,
-                                            ),
-                                            Text(
-                                              "posts",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall,
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          width: Get.width * 0.09,
-                                        ),
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Text(
-                                              "23",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium,
-                                            ),
-                                            Text(
-                                              "Followers",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall,
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          width: Get.width * 0.09,
-                                        ),
-                                        Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Text(
-                                              "23",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium,
-                                            ),
-                                            Text(
-                                              "Following",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall,
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 10,
+                                userController
+                                            .currentUserData.value["picture"] ==
+                                        null
+                                    ? const CircleAvatar(
+                                        radius: 35,
+                                        backgroundColor: Colors.white,
+                                        backgroundImage: AssetImage(
+                                            "assets/images/profile_picture.png"),
+                                      )
+                                    : CircleAvatar(
+                                        radius: 35,
+                                        backgroundColor: Colors.white,
+                                        backgroundImage: NetworkImage(
+                                            userController.currentUserData
+                                                .value["picture"]),
+                                      ),
+                                SizedBox(
+                                  width: Get.width * 0.1,
                                 ),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                        left: Get.width * 0.01,
-                                        right: Get.width * 0.01,
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            userController
-                                                .currentUserData.value["name"],
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .displayMedium,
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            userController
-                                                .currentUserData.value["bio"],
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .displaySmall,
-                                          )
-                                        ],
-                                      ),
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Text(
+                                          "23",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium,
+                                        ),
+                                        Text(
+                                          "posts",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall,
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      width: Get.width * 0.09,
+                                    ),
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Text(
+                                          "23",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium,
+                                        ),
+                                        Text(
+                                          "Followers",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall,
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      width: Get.width * 0.09,
+                                    ),
+                                    Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Text(
+                                          "23",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium,
+                                        ),
+                                        Text(
+                                          "Following",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall,
+                                        ),
+                                      ],
                                     ),
                                   ],
-                                ),
-                                const SizedBox(
-                                  height: 12,
-                                ),
-                                Container(
-                                  height: 50,
-                                  child: TabBar(
-                                      controller: tabController,
-                                      tabs: const [
-                                        Icon(Icons.text_format),
-                                        Icon(Icons.image),
-                                        Icon(Icons.question_answer),
-                                        Icon(Icons.thumb_up)
-                                      ]),
-                                ),
-                                Container(
-                                  height: 1000,
-                                  child: TabBarView(
-                                      controller: tabController,
-                                      children: [
-                                        const TextPosts(),
-                                        const ImagePosts(),
-                                        Container(),
-                                        const Text("hi")
-                                      ]),
                                 )
                               ],
                             ),
-                          ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(
+                                    left: Get.width * 0.01,
+                                    right: Get.width * 0.01,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        userController
+                                            .currentUserData.value["name"],
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .displayMedium,
+                                      ),
+                                      const SizedBox(
+                                        height: 8,
+                                      ),
+                                      Text(
+                                        userController
+                                            .currentUserData.value["bio"],
+                                        style: TextStyle(fontSize: 16),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 12,
+                            ),
+                            Container(
+                              height: 50,
+                              child: TabBar(
+                                  controller: tabController,
+                                  tabs: const [
+                                    Icon(Icons.text_format),
+                                    Icon(Icons.image),
+                                    Icon(Icons.question_answer),
+                                    Icon(Icons.thumb_up)
+                                  ]),
+                            ),
+                            Flexible(
+                              flex: 1,
+                              child: Container(
+                                child: TabBarView(
+                                    controller: tabController,
+                                    children: [
+                                      const TextPosts(),
+                                      const ImagePosts(),
+                                      Container(),
+                                      const Text("hi")
+                                    ]),
+                              ),
+                            )
+                          ],
                         ),
                       ),
-                    ],
+                    ),
                   ));
       }
     });

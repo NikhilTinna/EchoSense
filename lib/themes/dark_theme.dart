@@ -15,22 +15,22 @@ ThemeData darkTheme = ThemeData(
     cardColor: Colors.grey[800],
     dividerColor: Colors.grey[600],
     appBarTheme: AppBarTheme(backgroundColor: Color(0xff15202B)),
-    iconTheme: const IconThemeData(color: Colors.indigo),
+    iconTheme: const IconThemeData(color: Colors.grey),
     indicatorColor: Colors.indigo,
     textTheme: TextTheme(
       displayLarge: GoogleFonts.roboto(
         textStyle: const TextStyle(
             fontSize: 28, color: Colors.white, fontWeight: FontWeight.w700),
       ),
-      bodyMedium: GoogleFonts.roboto(
-        textStyle: const TextStyle(
-            fontSize: 20, color: Colors.white, fontWeight: FontWeight.w500),
-      ),
       displayMedium: GoogleFonts.roboto(
         textStyle: const TextStyle(
             fontSize: 18, color: Colors.white, fontWeight: FontWeight.w500),
       ),
       displaySmall: GoogleFonts.roboto(
+        textStyle: const TextStyle(
+            fontSize: 17, color: Colors.blueGrey, fontWeight: FontWeight.w400),
+      ),
+      bodyMedium: GoogleFonts.roboto(
         textStyle: const TextStyle(
             fontSize: 17, color: Colors.white, fontWeight: FontWeight.w400),
       ),
