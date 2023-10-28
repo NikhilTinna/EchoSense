@@ -20,6 +20,7 @@ userRouter.post("/signup", async (req, res) => {
       password: hashedpassword,
     },
   });
+  console.log(newUser)
 
   const token = jwt.sign(newUser, process.env.SECRET_KEY);
 
@@ -107,5 +108,11 @@ userRouter.post("/signin", async (req, res) => {
     res.json(token);
   } catch (e) {}
 });
+
+userRouter.get("/details/:id",async(req,res)=>{
+  const id=req.params.id
+  const user=await prisma.user.findFirst({where:{id}})
+  res.json(user)
+})
 
 module.exports = userRouter;

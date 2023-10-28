@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:social_media/constants/REST_api.dart';
 import 'package:social_media/constants/global.dart';
+import 'package:social_media/constants/toast.dart';
 import 'package:social_media/controllers/authController.dart';
 import 'package:social_media/controllers/userController.dart';
 import 'package:social_media/models/post.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:social_media/views/main/edit_profile.dart';
 import 'package:social_media/views/main/posts/image_posts.dart';
 import 'package:social_media/views/main/posts/text_posts.dart';
 
@@ -23,17 +25,25 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
   UserController userController = Get.put(UserController());
   AuthController authController = Get.put(AuthController());
 
+  void getUserProfileData() async {
+    http.Response res =
+        await get("$url/user/details/${authController.userId.value}");
+    userController.currentUserData.value = jsonDecode(res.body);
+    print(userController.currentUserData.value);
+  }
+
   void getCurrentUserData() async {
     userController.currentUserIsLoading.value = true;
     http.Response res = await get("$url/posts/${authController.userId.value}");
 
     userController.currentUserPosts.value = jsonDecode(res.body);
-    print(userController.currentUserPosts.value);
+
     userController.currentUserIsLoading.value = false;
   }
 
   @override
   void initState() {
+    getUserProfileData();
     getCurrentUserData();
     super.initState();
   }
@@ -43,8 +53,37 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
     var tabController = TabController(vsync: this, length: 4);
     return Obx(() => Scaffold(
         appBar: AppBar(
-            backgroundColor: Theme.of(context).colorScheme.background,
-            title: const Text("Your profile")),
+          title: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 24,
+              ),
+              Text(
+                "Your profile",
+                style: Theme.of(context).textTheme.displayLarge,
+              ),
+              PopupMenuButton(
+                  icon: const Icon(Icons.menu),
+                  itemBuilder: (context) {
+                    return [
+                      PopupMenuItem(
+                          child: InkWell(
+                              onTap: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return EditProfile();
+                                }));
+                              },
+                              child: const Text("Edit profile"))),
+                      PopupMenuItem(child: InkWell(child: Text("Logout")))
+                    ];
+                  })
+            ],
+          ),
+          backgroundColor: Theme.of(context).colorScheme.background,
+        ),
         backgroundColor: Theme.of(context).colorScheme.background,
         body: userController.currentUserIsLoading.value
             ? const Center(
@@ -52,7 +91,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                 color: Colors.grey,
               ))
             : ListView(
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 children: [
                   SafeArea(
                     child: Container(
@@ -69,12 +108,22 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const CircleAvatar(
-                                  radius: 35,
-                                  backgroundColor: Colors.white,
-                                  backgroundImage:
-                                      AssetImage("assets/images/logo.png"),
-                                ),
+                                userController
+                                            .currentUserData.value["picture"] ==
+                                        null
+                                    ? const CircleAvatar(
+                                        radius: 35,
+                                        backgroundColor: Colors.white,
+                                        backgroundImage: AssetImage(
+                                            "assets/images/profile_picture.png"),
+                                      )
+                                    : CircleAvatar(
+                                        radius: 35,
+                                        backgroundColor: Colors.white,
+                                        backgroundImage: NetworkImage(
+                                            userController.currentUserData
+                                                .value["picture"]),
+                                      ),
                                 SizedBox(
                                   width: Get.width * 0.1,
                                 ),
@@ -200,9 +249,9 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                               child: TabBarView(
                                   controller: tabController,
                                   children: [
-                                    TextPosts(),
-                                    ImagePosts(),
-                                    const Text("hi"),
+                                    const TextPosts(),
+                                    const ImagePosts(),
+                                    Container(),
                                     const Text("hi")
                                   ]),
                             )
