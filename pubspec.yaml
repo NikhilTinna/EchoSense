@@ -17,6 +17,7 @@ dependencies:
   http: ^1.1.0
   image_picker:
   intl:
+  scrollable_positioned_list:
 
 dev_dependencies:
   flutter_test:

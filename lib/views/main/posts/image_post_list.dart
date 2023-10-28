@@ -1,40 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:social_media/controllers/authController.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:social_media/controllers/userController.dart';
 
-import '../../../controllers/userController.dart';
+class ImagePostList extends StatefulWidget {
+  final List<dynamic> images;
+  final int count;
 
-class TextPosts extends StatefulWidget {
-  const TextPosts({super.key});
+  ImagePostList(this.images, this.count);
 
   @override
-  State<TextPosts> createState() => _TextPostsState();
+  State<ImagePostList> createState() => _ImagePostListState();
 }
 
-class _TextPostsState extends State<TextPosts> {
+class _ImagePostListState extends State<ImagePostList> {
   UserController userController = Get.put(UserController());
-  List<dynamic> textPosts = [];
-  @override
-  void initState() {
-    for (int i = 0; i < userController.currentUserPosts.value.length; i++) {
-      if (userController.currentUserPosts.value[i]["imageurl"] == null) {
-        setState(() {
-          textPosts.add(userController.currentUserPosts.value[i]);
-        });
-      }
-    }
-
-    super.initState();
-  }
+  ItemScrollController itemScrollController = ItemScrollController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      body: Container(
-        margin: const EdgeInsets.only(top: 10),
-        child: ListView.builder(
-            itemCount: textPosts.length,
+      body: SafeArea(
+          child: Container(
+        margin: EdgeInsets.only(
+            top: 10, left: Get.width * 0.025, right: Get.width * 0.025),
+        child: ScrollablePositionedList.builder(
+            itemScrollController: itemScrollController,
+            initialScrollIndex: widget.count,
+            itemCount: widget.images.length,
             itemBuilder: (context, index) {
               return Container(
                 margin: const EdgeInsets.only(bottom: 12),
@@ -63,10 +57,10 @@ class _TextPostsState extends State<TextPosts> {
                                         .currentUserData.value["picture"]),
                                   )),
                         SizedBox(
-                          width: Get.width * 0.04,
+                          width: Get.width * 0.02,
                         ),
                         Container(
-                            width: Get.width * 0.77,
+                            width: Get.width * 0.79,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,20 +86,31 @@ class _TextPostsState extends State<TextPosts> {
                       height: Get.height * 0.01,
                     ),
                     Container(
-                      margin: EdgeInsets.only(left: Get.width * 0.17),
+                      margin: EdgeInsets.only(left: Get.width * 0.15),
                       child: Column(
                         children: [
                           Row(
                             children: [
-                              Flexible(
-                                child: Text(
-                                  textPosts[index]["description"],
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
+                              Text(
+                                widget.images[index]["description"],
+                                style: Theme.of(context).textTheme.bodyMedium,
                               ),
                             ],
                           ),
                           const SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(
+                                top: 3, bottom: 3, left: 1.5, right: 1.5),
+                            child: Image.network(
+                              widget.images[index][
+                                  "imageurl"], // Replace with the path to your image
+                              fit: BoxFit
+                                  .fill, // Use BoxFit.fill to force the image to fill the container
+                            ),
+                          ),
+                          SizedBox(
                             height: 10,
                           ),
                           Row(
@@ -152,7 +157,7 @@ class _TextPostsState extends State<TextPosts> {
                 ),
               );
             }),
-      ),
+      )),
     );
   }
 }
