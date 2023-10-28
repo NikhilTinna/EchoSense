@@ -129,12 +129,14 @@ class _OTPState extends State<OTP> {
                         if (res.statusCode == 200) {
                           SharedPreferences sp =
                               await SharedPreferences.getInstance();
-                          sp.setString("token", res.body);
+                          sp.setString("token", res.body.replaceAll('"', ''));
                           AuthController authController =
                               Get.put(AuthController());
                           authController.decodedToken.value =
                               JwtDecoder.decode(sp.getString("token")!);
                           authController.token.value = sp.getString("token")!;
+                          authController.userId.value =
+                              authController.decodedToken.value["id"];
                           Navigator.pushReplacement(context,
                               MaterialPageRoute(builder: (context) {
                             return UserNavigationBar();

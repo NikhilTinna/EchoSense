@@ -22,7 +22,7 @@ postRouter.post("",verifyJWT,async(req,res)=>{
     res.json("post created successfully")
 })
 
-postRouter.post("/image", upload.single("image"), async (req, res) => {
+postRouter.post("/image",verifyJWT, upload.single("image"), async (req, res) => {
     cloudinary.uploader.upload(
       req.file.path,
       {

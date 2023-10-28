@@ -87,7 +87,19 @@ class _AddPostState extends State<AddPost> {
                             left: 0,
                             right: 0,
                             child: ElevatedButton(
-                                onPressed: () async {},
+                                onPressed: () async {
+                                  AuthController authController =
+                                      Get.put(AuthController());
+                                  print(authController.token.value);
+                                  http.Response res = await post(
+                                      endpoint: "$url/posts",
+                                      body: jsonEncode({
+                                        "description": textController.text,
+                                        "userId": authController.userId.value
+                                      }),
+                                      success: () => showSuccessToast(
+                                          "Post added successfully"));
+                                },
                                 child: const Text("Add post")))
                       ],
                     )

@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_media/views/authentication/signup.dart';
+import 'package:social_media/views/main/navigation_bar.dart';
 
 import '../../constants/REST_api.dart';
 import '../../constants/toast.dart';
@@ -151,7 +152,9 @@ class _LoginState extends State<Login> {
                                     if (res.statusCode == 200) {
                                       SharedPreferences sp =
                                           await SharedPreferences.getInstance();
-                                      sp.setString("token", res.body);
+                                      sp.setString("token",
+                                          res.body.replaceAll('"', ''));
+                                      print(sp.getString("token"));
                                       AuthController authController =
                                           Get.put(AuthController());
                                       authController.decodedToken.value =
@@ -159,6 +162,16 @@ class _LoginState extends State<Login> {
                                               sp.getString("token")!);
                                       authController.token.value =
                                           sp.getString("token")!;
+                                      authController.userId.value =
+                                          authController
+                                              .decodedToken.value["id"];
+
+                                      Navigator.pushReplacement(context,
+                                          MaterialPageRoute(
+                                        builder: (context) {
+                                          return UserNavigationBar();
+                                        },
+                                      ));
                                     }
                                   },
                                   child: Text(
