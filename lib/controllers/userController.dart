@@ -5,4 +5,5 @@ class UserController extends GetxController {
   RxMap<dynamic, dynamic> currentUserData = {}.obs;
   RxList currentUserPosts = [].obs;
   RxBool currentUserIsLoading = false.obs;
+  RxList likes = [].obs;
 }
