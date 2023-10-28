@@ -7,7 +7,7 @@ import 'error_handling.dart';
 import 'global.dart';
 
 Future<http.Response> get(String endpoint) async {
-  return await http.get(Uri.parse("$url/$endpoint"));
+  return await http.get(Uri.parse(endpoint));
 }
 
 Future<http.Response> post(

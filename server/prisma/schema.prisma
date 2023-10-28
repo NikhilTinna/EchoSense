@@ -23,6 +23,8 @@ model Post {
   id           String    @id @default(uuid())
   description  String
   imageurl     String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
   user         User      @relation("PostCreator", fields: [userId], references: [id])
   userId       String
   quotePost    Post?     @relation("QuotedPost", fields: [quotedPostId], references: [id])
@@ -32,10 +34,12 @@ model Post {
 }
 
 model Comment {
-  id          String @id @default(uuid())
+  id          String   @id @default(uuid())
   description String
-  user        User   @relation("CommentCreator", fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation("CommentCreator", fields: [userId], references: [id])
   userId      String
-  post        Post   @relation("PostChild", fields: [postId], references: [id])
+  post        Post     @relation("PostChild", fields: [postId], references: [id])
   postId      String
 }

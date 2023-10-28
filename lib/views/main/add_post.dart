@@ -10,6 +10,7 @@ import 'package:social_media/constants/global.dart';
 import 'package:social_media/constants/toast.dart';
 import 'package:http/http.dart' as http;
 import 'package:social_media/controllers/authController.dart';
+import 'package:social_media/controllers/userController.dart';
 
 class AddPost extends StatefulWidget {
   const AddPost({super.key});
@@ -99,6 +100,10 @@ class _AddPostState extends State<AddPost> {
                                       }),
                                       success: () => showSuccessToast(
                                           "Post added successfully"));
+                                  UserController userController =
+                                      Get.put(UserController());
+                                  userController.currentUserIsLoading.value =
+                                      true;
                                 },
                                 child: const Text("Add post")))
                       ],

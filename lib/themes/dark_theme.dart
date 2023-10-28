@@ -26,6 +26,14 @@ ThemeData darkTheme = ThemeData(
         textStyle: const TextStyle(
             fontSize: 20, color: Colors.white, fontWeight: FontWeight.w500),
       ),
+      displayMedium: GoogleFonts.roboto(
+        textStyle: const TextStyle(
+            fontSize: 18, color: Colors.white, fontWeight: FontWeight.w500),
+      ),
+      displaySmall: GoogleFonts.roboto(
+        textStyle: const TextStyle(
+            fontSize: 17, color: Colors.white, fontWeight: FontWeight.w400),
+      ),
       bodySmall: GoogleFonts.roboto(
         textStyle: const TextStyle(
             fontSize: 16, color: Colors.grey, fontWeight: FontWeight.w400),
