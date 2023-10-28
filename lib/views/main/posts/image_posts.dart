@@ -44,7 +44,8 @@ class _ImagePostsState extends State<ImagePosts> {
               SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
           itemBuilder: (context, index) {
             return Container(
-              margin: const EdgeInsets.all(1),
+              margin: const EdgeInsets.only(
+                  top: 3, bottom: 3, left: 1.5, right: 1.5),
               child: Image.network(
                 imagePosts[index]
                     ["imageurl"], // Replace with the path to your image
