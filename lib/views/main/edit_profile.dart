@@ -1,8 +1,16 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:social_media/constants/REST_api.dart';
+import 'package:social_media/constants/global.dart';
 
+import '../../constants/toast.dart';
 import '../../controllers/authController.dart';
 import '../../controllers/userController.dart';
+import 'package:http/http.dart' as http;
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -18,6 +26,19 @@ class _EditProfileState extends State<EditProfile> {
   var nameController = TextEditingController();
   var usernameController = TextEditingController();
   var bioController = TextEditingController();
+  File? profileImage = File("");
+  Future getImageGallery() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        profileImage = File(pickedFile.path);
+      });
+    } else {
+      showErrorToast("Please pick an image");
+    }
+  }
+
+  final picker = ImagePicker();
 
   @override
   void initState() {
@@ -35,7 +56,7 @@ class _EditProfileState extends State<EditProfile> {
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
-        title: Text("Edit Profile"),
+        title: const Text("Edit Profile"),
       ),
       body: SingleChildScrollView(
         child: SafeArea(
@@ -47,24 +68,47 @@ class _EditProfileState extends State<EditProfile> {
               bottom: 20),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            userController.currentUserData.value["picture"] == null
-                ? Center(
-                    child: const CircleAvatar(
-                      radius: 45,
-                      backgroundColor: Colors.white,
-                      backgroundImage:
-                          AssetImage("assets/images/profile_picture.png"),
+            profileImage!.path.isNotEmpty
+                ? InkWell(
+                    onTap: () {
+                      getImageGallery();
+                    },
+                    child: Center(
+                      child: CircleAvatar(
+                        radius: 45,
+                        backgroundColor: Colors.white,
+                        backgroundImage: FileImage(profileImage!),
+                      ),
                     ),
                   )
-                : Center(
-                    child: CircleAvatar(
-                      radius: 45,
-                      backgroundColor: Colors.white,
-                      backgroundImage: NetworkImage(
-                          userController.currentUserData.value["picture"]),
-                    ),
-                  ),
-            SizedBox(
+                : userController.currentUserData.value["picture"] == null
+                    ? InkWell(
+                        onTap: () {
+                          getImageGallery();
+                        },
+                        child: const Center(
+                          child: CircleAvatar(
+                            radius: 45,
+                            backgroundColor: Colors.white,
+                            backgroundImage:
+                                AssetImage("assets/images/profile_picture.png"),
+                          ),
+                        ),
+                      )
+                    : InkWell(
+                        onTap: () {
+                          getImageGallery();
+                        },
+                        child: Center(
+                          child: CircleAvatar(
+                            radius: 45,
+                            backgroundColor: Colors.white,
+                            backgroundImage: NetworkImage(userController
+                                .currentUserData.value["picture"]),
+                          ),
+                        ),
+                      ),
+            const SizedBox(
               height: 50,
             ),
             Row(
@@ -158,7 +202,141 @@ class _EditProfileState extends State<EditProfile> {
             const SizedBox(
               height: 20,
             ),
-            ElevatedButton(onPressed: () {}, child: Text("Edit profile"))
+            ElevatedButton(
+                onPressed: () async {
+                  if (profileImage!.path.isEmpty) {
+                    if (usernameController.text !=
+                        userController.currentUserData.value["username"]) {
+                      http.Response usernameRes = await post(
+                          endpoint: "$url/user/username",
+                          body: jsonEncode({
+                            "name": nameController.text,
+                            "username": usernameController.text,
+                            "bio": bioController.text
+                          }),
+                          success: () {});
+                      if (usernameRes.statusCode == 200) {
+                        userController.currentUserIsLoading.value = true;
+                        await put(
+                            endpoint: "$url/user/update/text",
+                            body: jsonEncode({
+                              "id": authController.userId.value,
+                              "name": nameController.text,
+                              "username": usernameController.text,
+                              "bio": bioController.text
+                            }),
+                            success: () {
+                              userController.currentUserData.value["name"] =
+                                  nameController.text;
+                              userController.currentUserData.value["username"] =
+                                  usernameController.text;
+                              userController.currentUserData.value["bio"] =
+                                  bioController.text;
+                              userController.currentUserIsLoading.value = false;
+                            });
+                        showSuccessToast("Profile Updated Successfully");
+                        Navigator.pop(context);
+                      }
+                    } else {
+                      userController.currentUserIsLoading.value = true;
+                      await put(
+                          endpoint: "$url/user/update/text",
+                          body: jsonEncode({
+                            "id": authController.userId.value,
+                            "name": nameController.text,
+                            "username": usernameController.text,
+                            "bio": bioController.text
+                          }),
+                          success: () {
+                            userController.currentUserData.value["name"] =
+                                nameController.text;
+                            userController.currentUserData.value["username"] =
+                                usernameController.text;
+                            userController.currentUserData.value["bio"] =
+                                bioController.text;
+                            userController.currentUserIsLoading.value = false;
+                          });
+                      showSuccessToast("Profile Updated Successfully");
+                      Navigator.pop(context);
+                    }
+                  } else {
+                    if (usernameController.text !=
+                        userController.currentUserData.value["username"]) {
+                      http.Response usernameRes = await post(
+                          endpoint: "$url/user/username",
+                          body: jsonEncode({
+                            "name": nameController.text,
+                            "username": usernameController.text,
+                            "bio": bioController.text
+                          }),
+                          success: () {});
+                      if (usernameRes.statusCode == 200) {
+                        var stream = http.ByteStream(profileImage!.openRead());
+                        stream.cast();
+                        print(profileImage!.path);
+
+                        var length = await profileImage!.length();
+                        http.MultipartRequest res = http.MultipartRequest(
+                            'PUT', Uri.parse("$url/user/update/image"));
+                        res.fields["id"] = authController.userId.value;
+                        res.fields["name"] = nameController.text;
+                        res.fields["username"] = usernameController.text;
+                        res.fields["bio"] = bioController.text;
+
+                        res.headers["x-auth-token"] =
+                            "bearer " + authController.token.value;
+                        var multiport = await http.MultipartFile.fromPath(
+                            "image", profileImage!.path.toString());
+
+                        res.files.add(multiport);
+                        await res.send();
+                        userController.currentUserData.value["name"] =
+                            nameController.text;
+                        userController.currentUserData.value["username"] =
+                            usernameController.text;
+                        userController.currentUserData.value["bio"] =
+                            bioController.text;
+
+                        userController.currentUserData.value["picture"] =
+                            res.headers["image"];
+                        showSuccessToast("Profile Updated Successfully");
+                        Navigator.pop(context);
+                      }
+                    } else {
+                      var stream = http.ByteStream(profileImage!.openRead());
+                      stream.cast();
+                      print(profileImage!.path);
+
+                      var length = await profileImage!.length();
+                      http.MultipartRequest res = http.MultipartRequest(
+                          'PUT', Uri.parse("$url/user/update/image"));
+                      res.fields["id"] = authController.userId.value;
+                      res.fields["name"] = nameController.text;
+                      res.fields["username"] = usernameController.text;
+                      res.fields["bio"] = bioController.text;
+
+                      res.headers["x-auth-token"] =
+                          "bearer " + authController.token.value;
+                      var multiport = await http.MultipartFile.fromPath(
+                          "image", profileImage!.path.toString());
+
+                      res.files.add(multiport);
+                      await res.send();
+                      userController.currentUserData.value["name"] =
+                          nameController.text;
+                      userController.currentUserData.value["username"] =
+                          usernameController.text;
+                      userController.currentUserData.value["bio"] =
+                          bioController.text;
+
+                      userController.currentUserData.value["picture"] =
+                          res.headers["image"];
+                      showSuccessToast("Profile Updated Successfully");
+                      Navigator.pop(context);
+                    }
+                  }
+                },
+                child: const Text("Edit profile"))
           ]),
         )),
       ),

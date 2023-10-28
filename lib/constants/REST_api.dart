@@ -30,3 +30,24 @@ Future<http.Response> post(
 
   return res;
 }
+
+Future<http.Response> put(
+    {required String endpoint,
+    required var body,
+    required VoidCallback success,
+    bool isImportant = true}) async {
+  AuthController authController = Get.put(AuthController());
+  http.Response res = await http.put(
+    Uri.parse(endpoint),
+    body: body,
+    headers: <String, String>{
+      'Content-Type': "application/json; charset=UTF-8",
+      'x-auth-token':
+          isImportant ? "bearer ${authController.token.value}" : "ghjghjg"
+    },
+  );
+  print(res);
+  httpErrorHandle(response: res, onSuccess: success);
+
+  return res;
+}

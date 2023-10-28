@@ -10,6 +10,7 @@ void httpErrorHandle(
       onSuccess();
       break;
     case 400:
+      showErrorToast(jsonDecode(response.body)["msg"]);
       break;
     case 500:
       showErrorToast(jsonDecode(response.body)["error"]);
