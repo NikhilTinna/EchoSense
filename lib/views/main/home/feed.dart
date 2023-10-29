@@ -20,10 +20,9 @@ class _FeedState extends State<Feed> {
   AuthController authController = Get.put(AuthController());
   MainController mainController = Get.put(MainController());
 
-  var isLoading = false;
+  bool isLoading = false;
   var posts = [];
   void getAllPostsData() async {
-    mainController.isLoading.value = true;
     http.Response res =
         await get("$url/posts/random/${authController.userId.value}");
 
@@ -38,6 +37,10 @@ class _FeedState extends State<Feed> {
     mainController.likes.value = [];
     mainController.isLikedByUser.value = [];
 
+    setState(() {
+      isLoading = true;
+    });
+
     for (var element in mainController.posts) {
       http.Response res = await get("$url/likes/post/${element["id"]}");
       http.Response likedByUserRes = await get(
@@ -49,7 +52,7 @@ class _FeedState extends State<Feed> {
     print(mainController.likes.value);
     print(mainController.isLikedByUser.value);
     setState(() {
-      mainController.isLoading.value = false;
+      isLoading = false;
     });
   }
 
@@ -97,14 +100,8 @@ class _FeedState extends State<Feed> {
 
   @override
   void initState() {
-    setState(() {
-      isLoading = true;
-    });
     getAllPostsData();
     getPostLikes();
-    setState(() {
-      isLoading = false;
-    });
   }
 
   @override
