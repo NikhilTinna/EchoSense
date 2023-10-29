@@ -16,6 +16,8 @@ import 'package:social_media/views/main/edit_profile.dart';
 import 'package:social_media/views/main/posts/image_posts.dart';
 import 'package:social_media/views/main/posts/text_posts.dart';
 
+import '../../controllers/mainController.dart';
+
 class Profile extends StatefulWidget {
   const Profile({super.key});
 
@@ -26,6 +28,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> with TickerProviderStateMixin {
   UserController userController = Get.put(UserController());
   AuthController authController = Get.put(AuthController());
+  MainController mainController = Get.put(MainController());
 
   void getUserProfileData() async {
     http.Response res =
@@ -96,6 +99,8 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                     SharedPreferences sp =
                                         await SharedPreferences.getInstance();
                                     sp.clear();
+
+                                    Get.deleteAll();
                                     showSuccessToast("Logged out");
                                     Navigator.pushReplacement(context,
                                         MaterialPageRoute(builder: (context) {

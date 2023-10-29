@@ -4,6 +4,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_media/constants/global.dart';
 import 'package:social_media/controllers/authController.dart';
+import 'package:social_media/controllers/mainController.dart';
 import 'package:social_media/controllers/userController.dart';
 import 'package:social_media/themes/dark_theme.dart';
 import 'package:social_media/themes/light_theme.dart';
@@ -16,6 +17,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   AuthController authController = Get.put(AuthController());
   UserController userController = Get.put(UserController());
+
   SharedPreferences sp = await SharedPreferences.getInstance();
   if (sp.getString("token") != null) {
     String? id = sp.getString("token");

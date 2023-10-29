@@ -14,6 +14,7 @@ postRouter.post("",verifyJWT,async(req,res)=>{
     res.json("post created successfully")
 })
 
+//get all posts for a specific user
 postRouter.get("/:id",async(req,res)=>{
   const id=req.params.id;
 
@@ -21,6 +22,24 @@ postRouter.get("/:id",async(req,res)=>{
      orderBy:{
     createdAt:"desc"
   }})
+  res.json(posts)
+})
+
+//get all posts of everyone except current user
+postRouter.get("/random/:id",async(req,res)=>{
+  const id=req.params.id;
+  const posts=await prisma.post.findMany({
+    where:{
+      userId:{
+        not:id
+      }
+    },include:{
+      user:true
+    },
+    orderBy:{
+      createdAt:"desc"
+    }
+  })
   res.json(posts)
 })
 
