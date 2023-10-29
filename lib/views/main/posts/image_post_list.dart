@@ -77,14 +77,13 @@ class _ImagePostListState extends State<ImagePostList> {
 
     http.Response res =
         await get("$url/likes/post/${widget.images[index]["id"]}");
-    print(res.body);
+
     userController.likes.value[index] = res.body;
 
     http.Response likedByUserRes = await get(
         "$url/likes/post/likedByUser/${authController.userId.value}/${widget.images[index]["id"]}");
     userController.isLikedByUser.value[index] = likedByUserRes.body;
-    print(userController.isLikedByUser.value[index]);
-    print(userController.likes.value[index]);
+
     setState(() {});
   }
 

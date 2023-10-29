@@ -25,10 +25,6 @@ class _ImagePostsState extends State<ImagePosts> {
       }
     }
 
-    for (var element in imagePosts) {
-      print(element["createdAt"]);
-    }
-
     super.initState();
   }
 
