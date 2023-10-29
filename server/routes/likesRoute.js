@@ -5,6 +5,7 @@ const verifyJWT=require("../utilities/verify_jwt")
 const likeRouter = express.Router();
 const prisma = new PrismaClient();
 
+//like a post
 likeRouter.post("/post",async(req,res)=>{
     
     const {userId,postId}=req.body;
@@ -18,6 +19,17 @@ likeRouter.post("/post",async(req,res)=>{
     res.json(like)
 })
 
+//renove like from post
+likeRouter.post("/post/remove",async(req,res)=>{
+    const {userId,postId}=req.body
+    const comment=await prisma.like.deleteMany({
+        where:{
+            userId,postId
+        }
+    })
+    res.json("like removed")
+})
+
 likeRouter.get("/post/:postId",async(req,res)=>{
     const {postId}=req.params
     const postLikes=await prisma.like.count({
@@ -28,9 +40,23 @@ likeRouter.get("/post/:postId",async(req,res)=>{
     res.json(postLikes)
 })
 
-likeRouter.post("",verifyJWT,async(req,res)=>{
-    const newComment=await prisma.comment.create({data:req.body})
-    res.json(newComment)
+likeRouter.get("/post/likedByUser/:userId/:postId",async(req,res)=>{
+    const {userId,postId}=req.params
+    const postLikedByuser=await prisma.like.findFirst({
+        where:{
+            userId,postId
+        }
+    })
+    if(postLikedByuser)
+    {
+        res.json(true)
+    }
+    else{
+        res.json(false)
+    }
 })
+
+
+
 
 module.exports = likeRouter;

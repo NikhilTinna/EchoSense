@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:social_media/constants/REST_api.dart';
 import 'package:social_media/constants/global.dart';
+import 'package:social_media/controllers/authController.dart';
 import 'package:social_media/controllers/userController.dart';
 import 'package:http/http.dart' as http;
 
@@ -18,24 +21,71 @@ class ImagePostList extends StatefulWidget {
 
 class _ImagePostListState extends State<ImagePostList> {
   UserController userController = Get.put(UserController());
+  AuthController authController = Get.put(AuthController());
   ItemScrollController itemScrollController = ItemScrollController();
   var isLoading = false;
   void getImageLikes() async {
     userController.likes.value = [];
+    userController.isLikedByUser.value = [];
     setState(() {
       isLoading = true;
     });
     for (var element in widget.images) {
-      print(element);
       http.Response res = await get("$url/likes/post/${element["id"]}");
-      setState(() {
-        userController.likes.value.add(res.body);
-      });
+      http.Response likedByUserRes = await get(
+          "$url/likes/post/likedByUser/${authController.userId.value}/${element["id"]}");
+
+      userController.likes.value.add(res.body);
+      userController.isLikedByUser.value.add(likedByUserRes.body);
     }
-    print(userController.likes.value);
+
     setState(() {
       isLoading = false;
     });
+  }
+
+  void likePost(int index) async {
+    http.Response resLike = await post(
+        endpoint: "$url/likes/post",
+        body: jsonEncode({
+          "userId": authController.userId.value,
+          "postId": widget.images[index]["id"]
+        }),
+        success: () {});
+
+    http.Response res =
+        await get("$url/likes/post/${widget.images[index]["id"]}");
+
+    userController.likes.value[index] = res.body;
+
+    http.Response likedByUserRes = await get(
+        "$url/likes/post/likedByUser/${authController.userId.value}/${widget.images[index]["id"]}");
+    userController.isLikedByUser.value[index] = likedByUserRes.body;
+    print(userController.isLikedByUser.value[index]);
+    print(userController.likes.value[index]);
+    setState(() {});
+  }
+
+  void dislikePost(int index) async {
+    http.Response resLike = await post(
+        endpoint: "$url/likes/post/remove",
+        body: jsonEncode({
+          "userId": authController.userId.value,
+          "postId": widget.images[index]["id"]
+        }),
+        success: () {});
+
+    http.Response res =
+        await get("$url/likes/post/${widget.images[index]["id"]}");
+    print(res.body);
+    userController.likes.value[index] = res.body;
+
+    http.Response likedByUserRes = await get(
+        "$url/likes/post/likedByUser/${authController.userId.value}/${widget.images[index]["id"]}");
+    userController.isLikedByUser.value[index] = likedByUserRes.body;
+    print(userController.isLikedByUser.value[index]);
+    print(userController.likes.value[index]);
+    setState(() {});
   }
 
   @override
@@ -49,7 +99,7 @@ class _ImagePostListState extends State<ImagePostList> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(
                 color: Colors.grey,
               ),
@@ -155,17 +205,34 @@ class _ImagePostListState extends State<ImagePostList> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 Row(
                                   children: [
-                                    const Icon(Icons.favorite_outline),
+                                    Obx(
+                                      () => InkWell(
+                                          onTap: () async {
+                                            userController.isLikedByUser
+                                                        .value[index] ==
+                                                    "false"
+                                                ? likePost(index)
+                                                : dislikePost(index);
+                                          },
+                                          child: Icon(userController
+                                                      .isLikedByUser
+                                                      .value[index] ==
+                                                  "false"
+                                              ? Icons.favorite_outline
+                                              : Icons.favorite)),
+                                    ),
                                     const SizedBox(
                                       width: 3,
                                     ),
-                                    Text(
-                                      userController.likes.value[index],
+                                    Obx(
+                                      () => Text(
+                                        userController.likes.value[index],
+                                      ),
                                     ),
                                     SizedBox(
                                       width: Get.width * 0.1,

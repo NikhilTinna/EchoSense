@@ -6,4 +6,5 @@ class UserController extends GetxController {
   RxList currentUserPosts = [].obs;
   RxBool currentUserIsLoading = false.obs;
   RxList likes = [].obs;
+  RxList isLikedByUser = [].obs;
 }
