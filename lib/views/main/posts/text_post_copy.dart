@@ -196,24 +196,29 @@ class _TextPostsState extends State<TextPosts> {
                                 ),
                                 Row(
                                   children: [
-                                    InkWell(
-                                        onTap: () async {
-                                          userController.isLikedByUser
+                                    Obx(
+                                      () => InkWell(
+                                          onTap: () async {
+                                            userController.isLikedByUser
+                                                        .value[index] ==
+                                                    "false"
+                                                ? likePost(index)
+                                                : dislikePost(index);
+                                          },
+                                          child: Icon(userController
+                                                      .isLikedByUser
                                                       .value[index] ==
                                                   "false"
-                                              ? likePost(index)
-                                              : dislikePost(index);
-                                        },
-                                        child: Icon(userController.isLikedByUser
-                                                    .value[index] ==
-                                                "false"
-                                            ? Icons.favorite_outline
-                                            : Icons.favorite)),
+                                              ? Icons.favorite_outline
+                                              : Icons.favorite)),
+                                    ),
                                     const SizedBox(
                                       width: 3,
                                     ),
-                                    Text(
-                                      userController.likes.value[index],
+                                    Obx(
+                                      () => Text(
+                                        userController.likes.value[index],
+                                      ),
                                     ),
                                     SizedBox(
                                       width: Get.width * 0.1,

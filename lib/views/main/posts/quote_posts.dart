@@ -2,51 +2,52 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:social_media/controllers/authController.dart';
 import 'package:http/http.dart' as http;
+import 'package:social_media/controllers/authController.dart';
 
 import '../../../constants/REST_api.dart';
 import '../../../constants/global.dart';
-import '../../../controllers/userController.dart';
 
-class TextPosts extends StatefulWidget {
-  const TextPosts({super.key});
+class QuotePosts extends StatefulWidget {
+  const QuotePosts({super.key});
 
   @override
-  State<TextPosts> createState() => _TextPostsState();
+  State<QuotePosts> createState() => _QuotePostsState();
 }
 
-class _TextPostsState extends State<TextPosts> {
-  UserController userController = Get.put(UserController());
+class _QuotePostsState extends State<QuotePosts> {
   AuthController authController = Get.put(AuthController());
-  List<dynamic> textPosts = [];
-  var isLoading = false;
 
-  void getTextLikes() async {
+  bool isLoading = false;
+  List allPosts = [];
+  List quotePosts = [];
+  List likes = [];
+  List isLikedByUser = [];
+  void getCurrentUserData() async {
     setState(() {
       isLoading = true;
     });
-    userController.likes.value = [];
-    userController.isLikedByUser.value = [];
-    for (int i = 0; i < userController.currentUserPosts.value.length; i++) {
-      if (userController.currentUserPosts.value[i]["imageurl"] == null &&
-          userController.currentUserPosts.value[i]["quotedPostId"] == null) {
+    http.Response res = await get("$url/posts/${authController.userId.value}");
+
+    allPosts = jsonDecode(res.body);
+
+    for (int i = 0; i < allPosts.length; i++) {
+      if (allPosts[i]["quotedPostId"] != null) {
         setState(() {
-          textPosts.add(userController.currentUserPosts.value[i]);
+          quotePosts.add(allPosts[i]);
         });
       }
     }
 
-    for (var element in textPosts) {
+    for (var element in quotePosts) {
       http.Response res = await get("$url/likes/post/${element["id"]}");
       http.Response likedByUserRes = await get(
           "$url/likes/post/likedByUser/${authController.userId.value}/${element["id"]}");
-
-      userController.likes.value.add(res.body);
-      userController.isLikedByUser.value.add(likedByUserRes.body);
+      likes.add(res.body);
+      isLikedByUser.add(likedByUserRes.body);
     }
-    print(userController.likes.value);
-    print(userController.isLikedByUser.value);
+    print(likes);
+    print(isLikedByUser);
 
     setState(() {
       isLoading = false;
@@ -58,20 +59,17 @@ class _TextPostsState extends State<TextPosts> {
         endpoint: "$url/likes/post",
         body: jsonEncode({
           "userId": authController.userId.value,
-          "postId": textPosts[index]["id"]
+          "postId": quotePosts[index]["id"]
         }),
         success: () {});
 
-    http.Response res = await get("$url/likes/post/${textPosts[index]["id"]}");
-
-    userController.likes.value[index] = res.body;
-
+    http.Response res = await get("$url/likes/post/${quotePosts[index]["id"]}");
     http.Response likedByUserRes = await get(
-        "$url/likes/post/likedByUser/${authController.userId.value}/${textPosts[index]["id"]}");
-    userController.isLikedByUser.value[index] = likedByUserRes.body;
-    print(userController.isLikedByUser.value[index]);
-    print(userController.likes.value[index]);
-    setState(() {});
+        "$url/likes/post/likedByUser/${authController.userId.value}/${quotePosts[index]["id"]}");
+    setState(() {
+      likes[index] = res.body;
+      isLikedByUser[index] = likedByUserRes.body;
+    });
   }
 
   void dislikePost(int index) async {
@@ -79,42 +77,37 @@ class _TextPostsState extends State<TextPosts> {
         endpoint: "$url/likes/post/remove",
         body: jsonEncode({
           "userId": authController.userId.value,
-          "postId": textPosts[index]["id"]
+          "postId": quotePosts[index]["id"]
         }),
         success: () {});
 
-    http.Response res = await get("$url/likes/post/${textPosts[index]["id"]}");
+    http.Response res = await get("$url/likes/post/${quotePosts[index]["id"]}");
 
-    userController.likes.value[index] = res.body;
+    likes[index] = res.body;
 
     http.Response likedByUserRes = await get(
-        "$url/likes/post/likedByUser/${authController.userId.value}/${textPosts[index]["id"]}");
-    userController.isLikedByUser.value[index] = likedByUserRes.body;
+        "$url/likes/post/likedByUser/${authController.userId.value}/${quotePosts[index]["id"]}");
+    isLikedByUser[index] = likedByUserRes.body;
 
     setState(() {});
   }
 
   @override
   void initState() {
-    getTextLikes();
-
+    getCurrentUserData();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
       body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(
-                color: Colors.grey,
-              ),
+          ? Center(
+              child: CircularProgressIndicator(),
             )
-          : Container(
-              margin: const EdgeInsets.only(top: 10),
+          : SafeArea(
               child: ListView.builder(
-                  itemCount: textPosts.length,
+                  itemCount: quotePosts.length,
                   itemBuilder: (context, index) {
                     return Container(
                       margin: const EdgeInsets.only(bottom: 12),
@@ -126,8 +119,7 @@ class _TextPostsState extends State<TextPosts> {
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10)),
                                   width: Get.width * 0.12,
-                                  child: userController.currentUserData
-                                              .value["picture"] ==
+                                  child: quotePosts[index]["user"]["picture"] ==
                                           null
                                       ? ClipRRect(
                                           borderRadius:
@@ -141,9 +133,8 @@ class _TextPostsState extends State<TextPosts> {
                                       : ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(10),
-                                          child: Image.network(userController
-                                              .currentUserData
-                                              .value["picture"]),
+                                          child: Image.network(quotePosts[index]
+                                              ["user"]["picture"]),
                                         )),
                               SizedBox(
                                 width: Get.width * 0.04,
@@ -153,14 +144,13 @@ class _TextPostsState extends State<TextPosts> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    userController
-                                        .currentUserData.value["name"],
+                                    quotePosts[index]["user"]["username"],
                                     style: Theme.of(context)
                                         .textTheme
                                         .displayMedium,
                                   ),
                                   Text(
-                                    "@${userController.currentUserData.value["username"]}",
+                                    "@${quotePosts[index]["user"]["username"]}",
                                     style: Theme.of(context)
                                         .textTheme
                                         .displaySmall,
@@ -183,7 +173,7 @@ class _TextPostsState extends State<TextPosts> {
                                   children: [
                                     Flexible(
                                       child: Text(
-                                        textPosts[index]["description"],
+                                        quotePosts[index]["description"],
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyMedium,
@@ -198,22 +188,19 @@ class _TextPostsState extends State<TextPosts> {
                                   children: [
                                     InkWell(
                                         onTap: () async {
-                                          userController.isLikedByUser
-                                                      .value[index] ==
-                                                  "false"
+                                          isLikedByUser[index] == "false"
                                               ? likePost(index)
                                               : dislikePost(index);
                                         },
-                                        child: Icon(userController.isLikedByUser
-                                                    .value[index] ==
-                                                "false"
-                                            ? Icons.favorite_outline
-                                            : Icons.favorite)),
+                                        child: Icon(
+                                            isLikedByUser[index] == "false"
+                                                ? Icons.favorite_outline
+                                                : Icons.favorite)),
                                     const SizedBox(
                                       width: 3,
                                     ),
                                     Text(
-                                      userController.likes.value[index],
+                                      likes[index],
                                     ),
                                     SizedBox(
                                       width: Get.width * 0.1,
@@ -249,8 +236,7 @@ class _TextPostsState extends State<TextPosts> {
                         ],
                       ),
                     );
-                  }),
-            ),
+                  })),
     );
   }
 }

@@ -9,4 +9,7 @@ class UserController extends GetxController {
   RxBool currentUserIsLoading = false.obs;
   RxList likes = [].obs;
   RxList isLikedByUser = [].obs;
+
+  RxList quoteLikes = [].obs;
+  RxList quoteIsLikedByUser = [].obs;
 }

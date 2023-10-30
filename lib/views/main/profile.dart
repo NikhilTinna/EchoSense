@@ -14,6 +14,7 @@ import 'package:http/http.dart' as http;
 import 'package:social_media/views/authentication/login.dart';
 import 'package:social_media/views/main/edit_profile.dart';
 import 'package:social_media/views/main/posts/image_posts.dart';
+import 'package:social_media/views/main/posts/quote_posts.dart';
 import 'package:social_media/views/main/posts/text_posts.dart';
 
 import '../../controllers/mainController.dart';
@@ -29,8 +30,12 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
   UserController userController = Get.put(UserController());
   AuthController authController = Get.put(AuthController());
   MainController mainController = Get.put(MainController());
+  var isLoading = false;
 
   void getUserProfileData() async {
+    setState(() {
+      isLoading = true;
+    });
     http.Response res =
         await get("$url/user/details/${authController.userId.value}");
     userController.currentUserData.value = jsonDecode(res.body);
@@ -44,10 +49,15 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
     userController.currentUserPosts.value = jsonDecode(res.body);
 
     userController.currentUserIsLoading.value = false;
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
   void initState() {
+    userController.currentUserIsLoading.value = true;
     getUserProfileData();
     getCurrentUserData();
     super.initState();
@@ -56,15 +66,13 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     var tabController = TabController(vsync: this, length: 4);
-    return Obx(() {
-      if (userController.currentUserIsLoading.value == true) {
-        return Center(
-          child: CircularProgressIndicator(
-            color: Colors.grey,
-          ),
-        );
-      } else {
-        return Scaffold(
+    return isLoading
+        ? const Center(
+            child: CircularProgressIndicator(
+              color: Colors.grey,
+            ),
+          )
+        : Scaffold(
             appBar: AppBar(
               automaticallyImplyLeading: false,
               title: Row(
@@ -87,7 +95,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                 Future.delayed(Duration.zero, () {
                                   Navigator.push(context,
                                       MaterialPageRoute(builder: (context) {
-                                    return EditProfile();
+                                    return const EditProfile();
                                   }));
                                 });
                               },
@@ -103,11 +111,11 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                 Future.delayed(Duration.zero, () {
                                   Navigator.pushReplacement(context,
                                       MaterialPageRoute(builder: (context) {
-                                    return Login();
+                                    return const Login();
                                   }));
                                 });
                               },
-                              child: Text("Logout"))
+                              child: const Text("Logout"))
                         ];
                       })
                 ],
@@ -258,7 +266,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                             ? ""
                                             : userController
                                                 .currentUserData.value["bio"],
-                                        style: TextStyle(fontSize: 16),
+                                        style: const TextStyle(fontSize: 16),
                                       )
                                     ],
                                   ),
@@ -287,7 +295,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                     children: [
                                       const TextPosts(),
                                       const ImagePosts(),
-                                      Container(),
+                                      QuotePosts(),
                                       const Text("hi")
                                     ]),
                               ),
@@ -297,7 +305,5 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                       ),
                     ),
                   ));
-      }
-    });
   }
 }

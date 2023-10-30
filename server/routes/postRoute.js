@@ -21,6 +21,9 @@ postRouter.get("/:id",async(req,res)=>{
   const posts=await prisma.post.findMany({where:{userId:id},
      orderBy:{
     createdAt:"desc"
+  },include:{
+    user:true,
+    quotePost:true
   }})
   res.json(posts)
 })
