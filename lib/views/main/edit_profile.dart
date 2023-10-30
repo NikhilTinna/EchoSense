@@ -236,6 +236,8 @@ class _EditProfileState extends State<EditProfile> {
                               userController.currentUserIsLoading.value = false;
                             });
                         showSuccessToast("Profile Updated Successfully");
+                        Navigator.pop(context);
+                        authController.userIndex.value = 0;
                       }
                     } else {
                       userController.currentUserIsLoading.value = true;
@@ -258,6 +260,7 @@ class _EditProfileState extends State<EditProfile> {
                           });
                       showSuccessToast("Profile Updated Successfully");
                       Navigator.pop(context);
+                      authController.userIndex.value = 0;
                     }
                   } else {
                     if (usernameController.text !=
@@ -301,6 +304,8 @@ class _EditProfileState extends State<EditProfile> {
                             res.headers["image"];
                         showSuccessToast("Profile Updated Successfully");
                         Navigator.pop(context);
+
+                        authController.userIndex.value = 0;
                       }
                     } else {
                       var stream = http.ByteStream(profileImage!.openRead());

@@ -45,7 +45,12 @@ postRouter.get("/random/:id",async(req,res)=>{
         not:id
       }
     },include:{
-      user:true
+      user:true,
+      quotePost:{
+        include:{
+          user:true
+        }
+      }
     },
     orderBy:{
       createdAt:"desc"
