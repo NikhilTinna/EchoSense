@@ -56,6 +56,30 @@ likeRouter.get("/post/likedByUser/:userId/:postId",async(req,res)=>{
     }
 })
 
+//get all liked posts for a user
+likeRouter.get("/posts/user/:userId",async(req,res)=>{
+    const userId=req.params;
+    const likedPosts=await prisma.like.findMany({where:userId,include:{
+        post:{
+            include:{
+                user:true,
+                quotePost:{
+                    include:{
+                        user:true
+                    }
+                }
+                
+            }
+        }
+
+        
+     
+    },orderBy:{
+        createdAt:"desc"
+      }})
+    res.json(likedPosts)
+})
+
 
 
 

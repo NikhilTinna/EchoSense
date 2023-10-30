@@ -26,6 +26,7 @@ void main() async {
     authController.userId.value = authController.decodedToken.value["id"];
     print(authController.userId.value);
   }
+  sp.clear();
 
   runApp(const MainApp());
 }

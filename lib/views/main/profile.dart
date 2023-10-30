@@ -14,6 +14,7 @@ import 'package:http/http.dart' as http;
 import 'package:social_media/views/authentication/login.dart';
 import 'package:social_media/views/main/edit_profile.dart';
 import 'package:social_media/views/main/posts/image_posts.dart';
+import 'package:social_media/views/main/posts/like_post.dart';
 import 'package:social_media/views/main/posts/quote_posts.dart';
 import 'package:social_media/views/main/posts/text_posts.dart';
 
@@ -150,8 +151,8 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                     return CircleAvatar(
                                       radius: 35,
                                       backgroundColor: Colors.white,
-                                      backgroundImage: AssetImage(userController
-                                          .currentUserData.value["picture"]),
+                                      backgroundImage: AssetImage(
+                                          "assets/images/profile_picture.png"),
                                     );
                                   } else {
                                     return CircleAvatar(
@@ -292,11 +293,11 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                               child: Container(
                                 child: TabBarView(
                                     controller: tabController,
-                                    children: [
-                                      const TextPosts(),
-                                      const ImagePosts(),
+                                    children: const [
+                                      TextPosts(),
+                                      ImagePosts(),
                                       QuotePosts(),
-                                      const Text("hi")
+                                      LikePost(),
                                     ]),
                               ),
                             )
