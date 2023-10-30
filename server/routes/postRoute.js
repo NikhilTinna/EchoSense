@@ -23,10 +23,18 @@ postRouter.get("/:id",async(req,res)=>{
     createdAt:"desc"
   },include:{
     user:true,
-    quotePost:true
+    quotePost:{
+      include:{
+        user:true
+      }
+    }
+      
   }})
   res.json(posts)
 })
+
+
+
 
 //get all posts of everyone except current user
 postRouter.get("/random/:id",async(req,res)=>{
@@ -68,6 +76,24 @@ postRouter.post("/reply",verifyJWT,async(req,res)=>{
     const newPost=await prisma.post.create({data:req.body})
     res.json(newPost)
 })
+
+postRouter.post("/reply/image", upload.single("image"), async (req, res) => {
+  cloudinary.uploader.upload(
+    req.file.path,
+    {
+      folder: `social_media`,      
+     // public_id: "banner",
+    },
+    async function (err, result) {
+      const {description,userId,quotedPostId}=req.body;
+
+      const post =await prisma.post.create({data:{description,userId,quotedPostId,imageurl: result.url}});
+      
+
+      res.json("Post created successfully");
+    }
+  );
+});
 
 
 module.exports = postRouter;

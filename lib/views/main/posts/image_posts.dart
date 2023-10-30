@@ -18,7 +18,8 @@ class _ImagePostsState extends State<ImagePosts> {
   @override
   void initState() {
     for (int i = 0; i < userController.currentUserPosts.value.length; i++) {
-      if (userController.currentUserPosts.value[i]["imageurl"] != null) {
+      if (userController.currentUserPosts.value[i]["imageurl"] != null &&
+          userController.currentUserPosts.value[i]["quotedPostId"] == null) {
         setState(() {
           imagePosts.add(userController.currentUserPosts.value[i]);
         });
