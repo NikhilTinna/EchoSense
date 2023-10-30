@@ -24,6 +24,7 @@ void main() async {
     authController.decodedToken.value = JwtDecoder.decode(id!);
     authController.token.value = sp.getString("token")!;
     authController.userId.value = authController.decodedToken.value["id"];
+    print(authController.userId.value);
   }
 
   runApp(const MainApp());

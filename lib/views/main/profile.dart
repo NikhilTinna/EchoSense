@@ -83,31 +83,31 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                       itemBuilder: (context) {
                         return [
                           PopupMenuItem(
-                              child: InkWell(
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    Navigator.push(context,
-                                        MaterialPageRoute(builder: (context) {
-                                      return EditProfile();
-                                    }));
-                                  },
-                                  child: const Text("Edit profile"))),
+                              onTap: () {
+                                Future.delayed(Duration.zero, () {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) {
+                                    return EditProfile();
+                                  }));
+                                });
+                              },
+                              child: const Text("Edit profile")),
                           PopupMenuItem(
-                              child: InkWell(
-                                  onTap: () async {
-                                    Navigator.pop(context);
-                                    SharedPreferences sp =
-                                        await SharedPreferences.getInstance();
-                                    sp.clear();
+                              onTap: () async {
+                                SharedPreferences sp =
+                                    await SharedPreferences.getInstance();
+                                sp.clear();
 
-                                    Get.deleteAll();
-                                    showSuccessToast("Logged out");
-                                    Navigator.pushReplacement(context,
-                                        MaterialPageRoute(builder: (context) {
-                                      return Login();
-                                    }));
-                                  },
-                                  child: Text("Logout")))
+                                Get.deleteAll();
+                                showSuccessToast("Logged out");
+                                Future.delayed(Duration.zero, () {
+                                  Navigator.pushReplacement(context,
+                                      MaterialPageRoute(builder: (context) {
+                                    return Login();
+                                  }));
+                                });
+                              },
+                              child: Text("Logout"))
                         ];
                       })
                 ],
@@ -135,22 +135,26 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                userController
-                                            .currentUserData.value["picture"] ==
-                                        null
-                                    ? const CircleAvatar(
-                                        radius: 35,
-                                        backgroundColor: Colors.white,
-                                        backgroundImage: AssetImage(
-                                            "assets/images/profile_picture.png"),
-                                      )
-                                    : CircleAvatar(
-                                        radius: 35,
-                                        backgroundColor: Colors.white,
-                                        backgroundImage: NetworkImage(
-                                            userController.currentUserData
-                                                .value["picture"]),
-                                      ),
+                                Obx(() {
+                                  if (userController
+                                          .currentUserData.value["picture"] ==
+                                      null) {
+                                    return CircleAvatar(
+                                      radius: 35,
+                                      backgroundColor: Colors.white,
+                                      backgroundImage: AssetImage(userController
+                                          .currentUserData.value["picture"]),
+                                    );
+                                  } else {
+                                    return CircleAvatar(
+                                      radius: 35,
+                                      backgroundColor: Colors.white,
+                                      backgroundImage: NetworkImage(
+                                          userController.currentUserData
+                                              .value["picture"]),
+                                    );
+                                  }
+                                }),
                                 SizedBox(
                                   width: Get.width * 0.1,
                                 ),
@@ -248,8 +252,12 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                         height: 8,
                                       ),
                                       Text(
-                                        userController
-                                            .currentUserData.value["bio"],
+                                        userController.currentUserData
+                                                    .value["bio"] ==
+                                                null
+                                            ? ""
+                                            : userController
+                                                .currentUserData.value["bio"],
                                         style: TextStyle(fontSize: 16),
                                       )
                                     ],

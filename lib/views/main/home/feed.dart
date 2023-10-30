@@ -23,34 +23,27 @@ class _FeedState extends State<Feed> {
   bool isLoading = false;
   var posts = [];
   void getAllPostsData() async {
+    setState(() {
+      isLoading = true;
+    });
     http.Response res =
         await get("$url/posts/random/${authController.userId.value}");
 
     mainController.posts.value = await jsonDecode(res.body);
 
-    for (int i = 0; i < mainController.posts.value.length; i++) {
-      posts.add(mainController.posts.value[i]);
-    }
-  }
-
-  void getPostLikes() async {
-    mainController.likes.value = [];
-    mainController.isLikedByUser.value = [];
-
-    setState(() {
-      isLoading = true;
-    });
-
+    posts = mainController.posts.value;
+    print(posts);
     for (var element in mainController.posts) {
       http.Response res = await get("$url/likes/post/${element["id"]}");
       http.Response likedByUserRes = await get(
           "$url/likes/post/likedByUser/${authController.userId.value}/${element["id"]}");
 
-      mainController.likes.value.add(res.body);
-      mainController.isLikedByUser.value.add(likedByUserRes.body);
+      print(res.body + "ghg");
+      print(likedByUserRes.body + "ghg");
+
+      mainController.likes.add(res.body);
+      mainController.isLikedByUser.add(likedByUserRes.body);
     }
-    print(mainController.likes.value);
-    print(mainController.isLikedByUser.value);
     setState(() {
       isLoading = false;
     });
@@ -100,8 +93,8 @@ class _FeedState extends State<Feed> {
 
   @override
   void initState() {
+    super.initState();
     getAllPostsData();
-    getPostLikes();
   }
 
   @override
@@ -168,7 +161,7 @@ class _FeedState extends State<Feed> {
                                                 SizedBox(
                                                   width: Get.width * 0.04,
                                                 ),
-                                                Container(
+                                                SizedBox(
                                                     width: Get.width * 0.77,
                                                     child: Column(
                                                       mainAxisAlignment:
@@ -335,7 +328,7 @@ class _FeedState extends State<Feed> {
                                                 SizedBox(
                                                   width: Get.width * 0.04,
                                                 ),
-                                                Container(
+                                                SizedBox(
                                                     width: Get.width * 0.77,
                                                     child: Column(
                                                       mainAxisAlignment:

@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:social_media/constants/REST_api.dart';
 import 'package:social_media/constants/global.dart';
+import 'package:social_media/views/main/home.dart';
 
 import '../../constants/toast.dart';
 import '../../controllers/authController.dart';
@@ -235,7 +236,6 @@ class _EditProfileState extends State<EditProfile> {
                               userController.currentUserIsLoading.value = false;
                             });
                         showSuccessToast("Profile Updated Successfully");
-                        Navigator.pop(context);
                       }
                     } else {
                       userController.currentUserIsLoading.value = true;
@@ -333,6 +333,7 @@ class _EditProfileState extends State<EditProfile> {
                           res.headers["image"];
                       showSuccessToast("Profile Updated Successfully");
                       Navigator.pop(context);
+                      authController.userIndex.value = 0;
                     }
                   }
                 },
