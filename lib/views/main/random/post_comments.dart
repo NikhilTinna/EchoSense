@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_string_interpolations
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -122,35 +124,64 @@ class _PostCommentsState extends State<PostComments> {
                         shrinkWrap: true,
                         itemCount: comments.length,
                         itemBuilder: (context, index) {
-                          return ListTile(
-                            leading: comments[index]["user"]["picture"] == null
-                                ? const CircleAvatar(
-                                    backgroundImage: AssetImage(
-                                        "assets/images/profile_picture.png"))
-                                : CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                        comments[index]["user"]["picture"])),
-                            title:
-                                Text(comments[index]["description"].toString()),
-                            trailing: Column(
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    if (isCommentLikedByUser[index] ==
-                                        "false") {
-                                      likeComment(index);
-                                    } else {
-                                      dislikeComment(index);
-                                    }
-                                  },
-                                  child: Icon(
-                                      isCommentLikedByUser[index] == "false"
-                                          ? Icons.favorite_outline
-                                          : Icons.favorite),
+                          return Column(
+                            children: [
+                              ListTile(
+                                leading: comments[index]["user"]["picture"] ==
+                                        null
+                                    ? const CircleAvatar(
+                                        backgroundImage: AssetImage(
+                                            "assets/images/profile_picture.png"))
+                                    : CircleAvatar(
+                                        backgroundImage: NetworkImage(
+                                            comments[index]["user"]
+                                                ["picture"])),
+                                title: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "${comments[index]["user"]["username"]}",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .displayMedium,
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        "${comments[index]["description"].toString()}",
+                                        style: TextStyle(),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                Text(commentLikes[index])
-                              ],
-                            ),
+                                trailing: Column(
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        if (isCommentLikedByUser[index] ==
+                                            "false") {
+                                          likeComment(index);
+                                        } else {
+                                          dislikeComment(index);
+                                        }
+                                      },
+                                      child: Icon(
+                                          isCommentLikedByUser[index] == "false"
+                                              ? Icons.favorite_outline
+                                              : Icons.favorite),
+                                    ),
+                                    Text(commentLikes[index])
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              )
+                            ],
                           );
                         }),
                   ),

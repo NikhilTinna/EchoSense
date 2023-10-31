@@ -5,6 +5,8 @@ const verifyJWT=require("../utilities/verify_jwt")
 const commentRouter = express.Router();
 const prisma = new PrismaClient();
 
+
+// get all posts for a comment
 commentRouter.get("/:id",async(req,res)=>{
     const id=req.params.id;
 
