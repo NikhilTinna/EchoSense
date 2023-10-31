@@ -7,4 +7,6 @@ class MainController extends GetxController {
   RxBool isLoading = false.obs;
   RxList likes = [].obs;
   RxList isLikedByUser = [].obs;
+
+  //for user comments
 }

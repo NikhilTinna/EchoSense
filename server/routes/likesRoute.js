@@ -30,6 +30,7 @@ likeRouter.post("/post/remove",async(req,res)=>{
     res.json("like removed")
 })
 
+//get likes for a particular post
 likeRouter.get("/post/:postId",async(req,res)=>{
     const {postId}=req.params
     const postLikes=await prisma.like.count({
@@ -40,6 +41,7 @@ likeRouter.get("/post/:postId",async(req,res)=>{
     res.json(postLikes)
 })
 
+//check if post liked by a user
 likeRouter.get("/post/likedByUser/:userId/:postId",async(req,res)=>{
     const {userId,postId}=req.params
     const postLikedByuser=await prisma.like.findFirst({
@@ -78,6 +80,60 @@ likeRouter.get("/posts/user/:userId",async(req,res)=>{
         createdAt:"desc"
       }})
     res.json(likedPosts)
+})
+
+
+//like a comment
+likeRouter.post("/comment",async(req,res)=>{
+    
+    const {userId,commentId}=req.body;
+
+    const like=await prisma.like.create({
+        data:{
+            userId,commentId
+        }
+    })
+
+    res.json("liked comment")
+})
+
+//renove like from comment
+likeRouter.post("/comment/remove",async(req,res)=>{
+    const {userId,commentId}=req.body
+    const comment=await prisma.like.deleteMany({
+        where:{
+            userId,commentId
+        }
+    })
+    res.json("like removed")
+})
+
+//get likes for a particular comment
+likeRouter.get("/comment/:commentId",async(req,res)=>{
+    const {commentId}=req.params
+    const postLikes=await prisma.like.count({
+        where:{
+            commentId
+        }
+    })
+    res.json(postLikes)
+})
+
+//check if comment liked by a user
+likeRouter.get("/comment/likedByUser/:userId/:commentId",async(req,res)=>{
+    const {userId,commentId}=req.params
+    const commentLikedByuser=await prisma.like.findFirst({
+        where:{
+            userId,commentId
+        }
+    })
+    if(commentLikedByuser)
+    {
+        res.json(true)
+    }
+    else{
+        res.json(false)
+    }
 })
 
 
