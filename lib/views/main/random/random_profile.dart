@@ -22,6 +22,7 @@ class RandomProfile extends StatefulWidget {
 class _RandomProfileState extends State<RandomProfile>
     with TickerProviderStateMixin {
   var posts = [];
+  var likedPosts = [];
   var isLoading = false;
   void getUserPosts() async {
     setState(() {
@@ -29,7 +30,9 @@ class _RandomProfileState extends State<RandomProfile>
     });
     http.Response res = await get("$url/posts/${widget.user["id"]}");
     posts = jsonDecode(res.body);
-
+    http.Response likedRes =
+        await get("$url/likes/posts/user/${widget.user["id"]}");
+    likedPosts = jsonDecode(likedRes.body);
     setState(() {
       isLoading = false;
     });
@@ -207,8 +210,14 @@ class _RandomProfileState extends State<RandomProfile>
                         userId: widget.user["id"],
                         userPosts: posts,
                       ),
-                      RandomUserQuotePosts(),
-                      RandomUserLikePosts(),
+                      RandomUserQuotePosts(
+                        userId: widget.user["id"],
+                        userPosts: posts,
+                      ),
+                      RandomUserLikePosts(
+                        userId: widget.user["id"],
+                        likePosts: likedPosts,
+                      ),
                     ]),
                   ),
                 )
