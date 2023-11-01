@@ -12,4 +12,8 @@ class UserController extends GetxController {
 
   RxList quoteLikes = [].obs;
   RxList quoteIsLikedByUser = [].obs;
+
+  //for user search functionality
+  var isSearchLoading = false.obs;
+  List users = [].obs;
 }

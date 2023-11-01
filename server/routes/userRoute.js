@@ -169,4 +169,26 @@ userRouter.put(
   }
 );
 
+//get all users having following letters in their username
+
+userRouter.get("/search/:id/:text",async(req,res)=>{
+
+  const id=req.params.id;
+  const text=req.params.text;
+ 
+  const users = await prisma.user.findMany({
+    where: {
+      id:{
+        not:id
+      },
+      username: {
+        contains: text, 
+      
+      },
+
+    }
+  });
+  res.json(users);
+})
+
 module.exports = userRouter;
