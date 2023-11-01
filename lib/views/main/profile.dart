@@ -9,7 +9,6 @@ import 'package:social_media/constants/toast.dart';
 import 'package:social_media/controllers/authController.dart';
 import 'package:social_media/controllers/userController.dart';
 import 'package:social_media/models/post.dart';
-
 import 'package:http/http.dart' as http;
 import 'package:social_media/views/authentication/login.dart';
 import 'package:social_media/views/main/edit_profile.dart';
@@ -273,9 +272,6 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                   ),
                                 ),
                               ],
-                            ),
-                            const SizedBox(
-                              height: 12,
                             ),
                             Container(
                               height: 50,

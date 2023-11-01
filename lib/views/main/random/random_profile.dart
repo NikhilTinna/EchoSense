@@ -24,6 +24,8 @@ class _RandomProfileState extends State<RandomProfile>
   var posts = [];
   var likedPosts = [];
   var isLoading = false;
+  var profileIndex = 0;
+  final scrollController = ScrollController();
   void getUserPosts() async {
     setState(() {
       isLoading = true;
@@ -57,10 +59,10 @@ class _RandomProfileState extends State<RandomProfile>
               onTap: () {
                 Navigator.pop(context);
               },
-              child: Icon(Icons.arrow_back),
+              child: const Icon(Icons.arrow_back),
             ),
             Container(
-              padding: EdgeInsets.only(right: 12),
+              padding: const EdgeInsets.only(right: 12),
               child: Text(
                 widget.user["username"],
                 style: Theme.of(context).textTheme.displayMedium,
@@ -71,7 +73,7 @@ class _RandomProfileState extends State<RandomProfile>
         ),
       ),
       body: isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(
                 color: Colors.grey,
               ),
@@ -85,7 +87,7 @@ class _RandomProfileState extends State<RandomProfile>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     widget.user["picture"] == null
-                        ? CircleAvatar(
+                        ? const CircleAvatar(
                             radius: 35,
                             backgroundColor: Colors.white,
                             backgroundImage:
@@ -154,40 +156,161 @@ class _RandomProfileState extends State<RandomProfile>
                   ],
                 ),
                 const SizedBox(
-                  height: 5,
+                  height: 8,
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(
-                        left: Get.width * 0.01,
-                        right: Get.width * 0.01,
+                Container(
+                  margin: EdgeInsets.only(
+                    left: Get.width * 0.01,
+                    right: Get.width * 0.01,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: Get.height * 0.16,
+                        child: ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            controller: scrollController,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: 2,
+                            itemBuilder: (context, index) {
+                              return index == 0
+                                  ? Container(
+                                      width: Get.width * 0.94,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                widget.user["name"],
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .displayMedium,
+                                              ),
+                                              InkWell(
+                                                onTap: () {
+                                                  scrollController.animateTo(
+                                                      (1) * Get.width * 0.95,
+                                                      duration: const Duration(
+                                                          milliseconds: 500),
+                                                      curve: Curves.ease);
+                                                  setState(() {
+                                                    profileIndex = 1;
+                                                  });
+                                                },
+                                                child: const Row(children: [
+                                                  Text("Bio "),
+                                                  Icon(
+                                                    Icons
+                                                        .arrow_forward_outlined,
+                                                    color: Colors.blue,
+                                                  )
+                                                ]),
+                                              )
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                            height: 8,
+                                          ),
+                                          Row(
+                                            children: [
+                                              SizedBox(
+                                                width: Get.width * 0.46,
+                                                child: ElevatedButton(
+                                                    onPressed: () {},
+                                                    child:
+                                                        const Text("Follow")),
+                                              ),
+                                              SizedBox(
+                                                width: Get.width * 0.02,
+                                              ),
+                                              SizedBox(
+                                                width: Get.width * 0.46,
+                                                child: ElevatedButton(
+                                                    onPressed: () {},
+                                                    child:
+                                                        const Text("Message")),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 3),
+                                          child: InkWell(
+                                            onTap: () {
+                                              scrollController.animateTo(
+                                                  (0) * Get.width * 0.95,
+                                                  duration: const Duration(
+                                                      milliseconds: 500),
+                                                  curve: Curves.ease);
+                                              setState(() {
+                                                profileIndex = 0;
+                                              });
+                                            },
+                                            child: Icon(
+                                              Icons.arrow_back,
+                                              color: Colors.red,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 5),
+                                          child: SizedBox(
+                                            width: Get.width * 0.95,
+                                            child: Text(
+                                              widget.user["bio"] ?? "",
+                                              style:
+                                                  const TextStyle(fontSize: 16),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                            }),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
                         children: [
-                          Text(
-                            widget.user["name"],
-                            style: Theme.of(context).textTheme.displayMedium,
-                          ),
-                          const SizedBox(
-                            height: 8,
+                          Container(
+                            width:
+                                15, // Adjust the size of the circle as needed
+                            height: 15,
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(width: 1.5, color: Colors.blue),
+                                shape: BoxShape.circle,
+                                color: profileIndex == 0 ? Colors.blue : null),
                           ),
                           SizedBox(
-                            height: Get.height * 0.13,
-                            child: Text(
-                              widget.user["bio"] ?? "",
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          )
+                            width: 2,
+                          ),
+                          Container(
+                            width:
+                                15, // Adjust the size of the circle as needed
+                            height: 15,
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(width: 1.5, color: Colors.blue),
+                                shape: BoxShape.circle,
+                                color: profileIndex == 1 ? Colors.blue : null),
+                          ),
                         ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 12,
+                      )
+                    ],
+                  ),
                 ),
                 Container(
                   height: 50,
