@@ -9,4 +9,5 @@ class MainController extends GetxController {
   RxList isLikedByUser = [].obs;
 
   //for user comments
+  List commentRepliesCount = [].obs;
 }

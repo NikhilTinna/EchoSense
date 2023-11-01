@@ -23,6 +23,7 @@ class _QuotePostsState extends State<QuotePosts> {
   List quotePosts = [];
   List likes = [];
   List isLikedByUser = [];
+
   void getCurrentUserData() async {
     setState(() {
       isLoading = true;

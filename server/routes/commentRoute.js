@@ -18,10 +18,19 @@ commentRouter.get("/:id",async(req,res)=>{
       }},)
     res.json(posts)
 })
-
+// create a comment
 commentRouter.post("",async(req,res)=>{
     const newComment=await prisma.comment.create({data:req.body})
     res.json(newComment)
+})
+
+//get total comment count for a post
+commentRouter.get("/count/:id",async(req,res)=>{
+    const id=req.params.id;
+
+    const commentCount=await prisma.comment.count({where:{postId:id}})
+
+    res.json(commentCount)
 })
 
 module.exports = commentRouter;

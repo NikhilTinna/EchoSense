@@ -12,25 +12,23 @@ import 'package:social_media/controllers/userController.dart';
 
 import '../../../controllers/authController.dart';
 import '../../../controllers/mainController.dart';
-import 'comment_replies.dart';
 
-class PostComments extends StatefulWidget {
+class CommentReplies extends StatefulWidget {
+  final String commentId;
   final String postId;
-  const PostComments({required this.postId});
+  final int index;
+  const CommentReplies(
+      {required this.postId, required this.commentId, required this.index});
 
   @override
-  State<PostComments> createState() => _PostCommentsState();
+  State<CommentReplies> createState() => _CommentRepliesState();
 }
 
-class _PostCommentsState extends State<PostComments> {
+class _CommentRepliesState extends State<CommentReplies> {
   AuthController authController = Get.put(AuthController());
   MainController mainController = Get.put(MainController());
   bool isLoading = false;
-  final commentController = TextEditingController();
-
-  List comments = [];
-  List commentLikes = [];
-  List isCommentLikedByUser = [];
+  final replyController = TextEditingController();
 
   List replies = [];
   List replyLikes = [];
@@ -41,21 +39,15 @@ class _PostCommentsState extends State<PostComments> {
       isLoading = true;
     });
 
-    mainController.commentRepliesCount = [].obs;
+    http.Response res = await get("$url/replies/${widget.commentId}");
 
-    http.Response res = await get("$url/comments/${widget.postId}");
-
-    comments = jsonDecode(res.body);
-    for (var element in comments) {
-      http.Response res = await get("$url/likes/comment/${element["id"]}");
-      commentLikes.add(res.body);
+    replies = jsonDecode(res.body);
+    for (var element in replies) {
+      http.Response res = await get("$url/likes/reply/${element["id"]}");
+      replyLikes.add(res.body);
       http.Response isLikedByUserRes = await get(
-          "$url/likes/comment/likedByUser/${authController.userId.value}/${element["id"]}");
-      isCommentLikedByUser.add(isLikedByUserRes.body);
-      http.Response repliesCountRes =
-          await get("$url/replies/count/${element["id"]}");
-
-      mainController.commentRepliesCount.add(repliesCountRes.body);
+          "$url/likes/reply/likedByUser/${authController.userId.value}/${element["id"]}");
+      isReplyLikedByUser.add(isLikedByUserRes.body);
     }
 
     setState(() {
@@ -63,41 +55,39 @@ class _PostCommentsState extends State<PostComments> {
     });
   }
 
-  void likeComment(int index) async {
+  void likeReply(int index) async {
     http.Response resLike = await post(
-        endpoint: "$url/likes/comment",
+        endpoint: "$url/likes/reply",
         body: jsonEncode({
           "userId": authController.userId.value,
-          "commentId": comments[index]["id"]
+          "replyId": replies[index]["id"]
         }),
         success: () {});
 
-    http.Response res =
-        await get("$url/likes/comment/${comments[index]["id"]}");
+    http.Response res = await get("$url/likes/reply/${replies[index]["id"]}");
     http.Response likedByUserRes = await get(
-        "$url/likes/comment/likedByUser/${authController.userId.value}/${comments[index]["id"]}");
+        "$url/likes/reply/likedByUser/${authController.userId.value}/${replies[index]["id"]}");
     setState(() {
-      commentLikes[index] = res.body;
-      isCommentLikedByUser[index] = likedByUserRes.body;
+      replyLikes[index] = res.body;
+      isReplyLikedByUser[index] = likedByUserRes.body;
     });
   }
 
-  void dislikeComment(int index) async {
+  void dislikeReply(int index) async {
     http.Response resLike = await post(
-        endpoint: "$url/likes/comment/remove",
+        endpoint: "$url/likes/reply/remove",
         body: jsonEncode({
           "userId": authController.userId.value,
-          "commentId": comments[index]["id"]
+          "replyId": replies[index]["id"]
         }),
         success: () {});
 
-    http.Response res =
-        await get("$url/likes/comment/${comments[index]["id"]}");
+    http.Response res = await get("$url/likes/reply/${replies[index]["id"]}");
     http.Response likedByUserRes = await get(
-        "$url/likes/comment/likedByUser/${authController.userId.value}/${comments[index]["id"]}");
+        "$url/likes/reply/likedByUser/${authController.userId.value}/${replies[index]["id"]}");
     setState(() {
-      commentLikes[index] = res.body;
-      isCommentLikedByUser[index] = likedByUserRes.body;
+      replyLikes[index] = res.body;
+      isReplyLikedByUser[index] = likedByUserRes.body;
     });
   }
 
@@ -112,7 +102,7 @@ class _PostCommentsState extends State<PostComments> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
-        title: const Text("Comments"),
+        title: const Text("Replies"),
       ),
       body: isLoading
           ? const Center(
@@ -130,20 +120,19 @@ class _PostCommentsState extends State<PostComments> {
                   Expanded(
                     child: ListView.builder(
                         shrinkWrap: true,
-                        itemCount: comments.length,
+                        itemCount: replies.length,
                         itemBuilder: (context, index) {
                           return Column(
                             children: [
                               ListTile(
-                                leading: comments[index]["user"]["picture"] ==
+                                leading: replies[index]["user"]["picture"] ==
                                         null
                                     ? const CircleAvatar(
                                         backgroundImage: AssetImage(
                                             "assets/images/profile_picture.png"))
                                     : CircleAvatar(
                                         backgroundImage: NetworkImage(
-                                            comments[index]["user"]
-                                                ["picture"])),
+                                            replies[index]["user"]["picture"])),
                                 title: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
@@ -151,7 +140,7 @@ class _PostCommentsState extends State<PostComments> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "${comments[index]["user"]["username"]}",
+                                        "${replies[index]["user"]["username"]}",
                                         style: Theme.of(context)
                                             .textTheme
                                             .displayMedium,
@@ -160,7 +149,7 @@ class _PostCommentsState extends State<PostComments> {
                                         height: 5,
                                       ),
                                       Text(
-                                        "${comments[index]["description"].toString()}",
+                                        "${replies[index]["description"].toString()}",
                                         style: TextStyle(),
                                       ),
                                     ],
@@ -170,47 +159,25 @@ class _PostCommentsState extends State<PostComments> {
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        if (isCommentLikedByUser[index] ==
+                                        if (isReplyLikedByUser[index] ==
                                             "false") {
-                                          likeComment(index);
+                                          likeReply(index);
                                         } else {
-                                          dislikeComment(index);
+                                          dislikeReply(index);
                                         }
                                       },
                                       child: Icon(
-                                          isCommentLikedByUser[index] == "false"
+                                          isReplyLikedByUser[index] == "false"
                                               ? Icons.favorite_outline
                                               : Icons.favorite),
                                     ),
-                                    Text(commentLikes[index])
+                                    Text(replyLikes[index])
                                   ],
                                 ),
                               ),
                               SizedBox(
                                 height: 5,
                               ),
-                              InkWell(
-                                onTap: () async {
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) {
-                                    return CommentReplies(
-                                        postId: widget.postId,
-                                        commentId: comments[index]["id"],
-                                        index: index);
-                                  }));
-                                },
-                                child: Obx(
-                                  () => Text(
-                                    " View replies (${mainController.commentRepliesCount[index]})",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .displaySmall,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 8,
-                              )
                             ],
                           );
                         }),
@@ -220,9 +187,9 @@ class _PostCommentsState extends State<PostComments> {
                     children: [
                       Expanded(
                         child: TextField(
-                          controller: commentController,
-                          decoration: const InputDecoration(
-                              hintText: "Enter comment.."),
+                          controller: replyController,
+                          decoration:
+                              const InputDecoration(hintText: "Enter reply.."),
                         ),
                       ),
                       const SizedBox(
@@ -230,42 +197,42 @@ class _PostCommentsState extends State<PostComments> {
                       ),
                       InkWell(
                           onTap: () async {
-                            if (commentController.text.isNotEmpty) {
+                            if (replyController.text.isNotEmpty) {
                               await post(
-                                  endpoint: "$url/comments/",
+                                  endpoint: "$url/replies/",
                                   body: jsonEncode({
-                                    "description": commentController.text,
+                                    "description": replyController.text,
                                     "userId": authController.userId.value,
-                                    "postId": widget.postId
+                                    "postId": widget.postId,
+                                    "commentId": widget.commentId,
                                   }),
                                   success: () {});
 
                               http.Response res =
-                                  await get("$url/comments/${widget.postId}");
+                                  await get("$url/replies/${widget.commentId}");
 
-                              comments = [];
-                              commentLikes = [];
-                              isCommentLikedByUser = [];
-                              mainController.commentRepliesCount = [];
+                              replies = [];
+                              replyLikes = [];
+                              isReplyLikedByUser = [];
 
-                              comments = jsonDecode(res.body);
-                              for (var element in comments) {
+                              replies = jsonDecode(res.body);
+                              for (var element in replies) {
                                 http.Response res = await get(
-                                    "$url/likes/comment/${element["id"]}");
-                                commentLikes.add(res.body);
+                                    "$url/likes/reply/${element["id"]}");
+                                replyLikes.add(res.body);
                                 http.Response isLikedByUserRes = await get(
-                                    "$url/likes/comment/likedByUser/${authController.userId.value}/${element["id"]}");
-                                isCommentLikedByUser.add(isLikedByUserRes.body);
-                                http.Response repliesCountRes = await get(
-                                    "$url/replies/count/${element["id"]}");
-
-                                mainController.commentRepliesCount
-                                    .add(repliesCountRes.body);
+                                    "$url/likes/reply/likedByUser/${authController.userId.value}/${element["id"]}");
+                                isReplyLikedByUser.add(isLikedByUserRes.body);
                               }
+                              http.Response replyCountResponse = await get(
+                                  "$url/replies/count/${widget.commentId}");
+
+                              mainController.commentRepliesCount[widget.index] =
+                                  replyCountResponse.body;
 
                               setState(() {});
                             }
-                            commentController.text = "";
+                            replyController.text = "";
                             FocusManager.instance.primaryFocus?.unfocus();
                           },
                           child: const Icon(Icons.send)),

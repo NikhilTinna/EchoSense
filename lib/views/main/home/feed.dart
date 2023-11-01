@@ -27,6 +27,7 @@ class _FeedState extends State<Feed> {
 
   bool isLoading = false;
   var posts = [];
+  var postCommentsCount = [];
   void getAllPostsData() async {
     setState(() {
       isLoading = true;
@@ -45,6 +46,11 @@ class _FeedState extends State<Feed> {
 
       mainController.likes.add(res.body);
       mainController.isLikedByUser.add(likedByUserRes.body);
+
+      http.Response commentCountRes =
+          await get("$url/comments/count/${element["id"]}");
+
+      postCommentsCount.add(commentCountRes.body);
     }
     setState(() {
       isLoading = false;
@@ -425,6 +431,30 @@ class _FeedState extends State<Feed> {
                                                   ),
                                                   InkWell(
                                                     onTap: () {
+                                                      Navigator.push(context,
+                                                          MaterialPageRoute(
+                                                              builder:
+                                                                  (context) {
+                                                        return PostComments(
+                                                            postId: posts[index]
+                                                                ["id"]);
+                                                      }));
+                                                    },
+                                                    child: const Icon(Icons
+                                                        .chat_bubble_outline),
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 3,
+                                                  ),
+                                                  Text(
+                                                    postCommentsCount[index]
+                                                        .toString(),
+                                                  ),
+                                                  SizedBox(
+                                                    width: Get.width * 0.1,
+                                                  ),
+                                                  InkWell(
+                                                    onTap: () {
                                                       final textController =
                                                           TextEditingController();
                                                       final picker =
@@ -549,8 +579,8 @@ class _FeedState extends State<Feed> {
                                                                                       constraints: BoxConstraints(minHeight: Get.height * 0.4, maxHeight: Get.height * 0.5),
                                                                                       margin: const EdgeInsets.only(top: 10),
                                                                                       child: Image.file(
-                                                                                        postImage!, // Replace with the path to your image
-                                                                                        fit: BoxFit.fill, // Use BoxFit.fill to force the image to fill the container
+                                                                                        postImage!,
+                                                                                        fit: BoxFit.fill,
                                                                                       ),
                                                                                     ),
                                                                                   ),
@@ -617,20 +647,9 @@ class _FeedState extends State<Feed> {
                                                             });
                                                           });
                                                     },
-                                                    child: const Icon(Icons
-                                                        .chat_bubble_outline),
+                                                    child: const Icon(
+                                                        Icons.replay_outlined),
                                                   ),
-                                                  const SizedBox(
-                                                    width: 3,
-                                                  ),
-                                                  const Text(
-                                                    "0",
-                                                  ),
-                                                  SizedBox(
-                                                    width: Get.width * 0.1,
-                                                  ),
-                                                  const Icon(
-                                                      Icons.replay_outlined),
                                                   const SizedBox(
                                                     width: 3,
                                                   ),

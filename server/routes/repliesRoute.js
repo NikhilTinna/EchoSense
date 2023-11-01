@@ -10,12 +10,11 @@ replyRouter.get("/:id",async(req,res)=>{
     const id=req.params.id;
 
     const posts=await prisma.reply.findMany({where:{commentId:id},include:{
-        user:true,
-        post:true,
-        comment:true
+       user:true,
+       post:true
       
     },orderBy:{
-        createdAt:"desc"
+        createdAt:"asc"
       }},)
     res.json(posts)
 })
@@ -23,6 +22,15 @@ replyRouter.get("/:id",async(req,res)=>{
 replyRouter.post("",async(req,res)=>{
     const newReply=await prisma.reply.create({data:req.body})
     res.json(newReply)
+})
+
+//get total reply count for a comment
+replyRouter.get("/count/:id",async(req,res)=>{
+    const id=req.params.id;
+
+    const replyCount=await prisma.reply.count({where:{commentId:id}})
+
+    res.json(replyCount)
 })
 
 module.exports = replyRouter;
