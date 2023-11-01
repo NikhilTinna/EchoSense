@@ -246,7 +246,6 @@ class _PostCommentsState extends State<PostComments> {
                               comments = [];
                               commentLikes = [];
                               isCommentLikedByUser = [];
-                              mainController.commentRepliesCount = [];
 
                               comments = jsonDecode(res.body);
                               for (var element in comments) {
@@ -259,8 +258,7 @@ class _PostCommentsState extends State<PostComments> {
                                 http.Response repliesCountRes = await get(
                                     "$url/replies/count/${element["id"]}");
 
-                                mainController.commentRepliesCount
-                                    .add(repliesCountRes.body);
+                                mainController.commentRepliesCount.insert(0, 0);
                               }
 
                               setState(() {});

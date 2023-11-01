@@ -227,8 +227,11 @@ class _CommentRepliesState extends State<CommentReplies> {
                               http.Response replyCountResponse = await get(
                                   "$url/replies/count/${widget.commentId}");
 
-                              mainController.commentRepliesCount[widget.index] =
-                                  replyCountResponse.body;
+                              setState(() {
+                                mainController
+                                        .commentRepliesCount[widget.index] =
+                                    replyCountResponse.body;
+                              });
 
                               setState(() {});
                             }

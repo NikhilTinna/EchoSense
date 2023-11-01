@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:social_media/constants/REST_api.dart';
@@ -184,7 +185,18 @@ class _EditProfileState extends State<EditProfile> {
               height: 5,
             ),
             TextFormField(
-              maxLines: 6,
+              maxLines: 5,
+              maxLength: 100,
+              inputFormatters: [
+                TextInputFormatter.withFunction((oldValue, newValue) {
+                  int newLines = newValue.text.split('\n').length;
+                  if (newLines > 5) {
+                    return oldValue;
+                  } else {
+                    return newValue;
+                  }
+                }),
+              ],
               controller: bioController,
               decoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(

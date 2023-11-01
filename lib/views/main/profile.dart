@@ -84,7 +84,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                     width: 24,
                   ),
                   Text(
-                    userController.currentUserData.value["username"],
+                    "Your Profile",
                     style: Theme.of(context).textTheme.displayMedium,
                   ),
                   PopupMenuButton(
@@ -148,7 +148,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                   if (userController
                                           .currentUserData.value["picture"] ==
                                       null) {
-                                    return CircleAvatar(
+                                    return const CircleAvatar(
                                       radius: 35,
                                       backgroundColor: Colors.white,
                                       backgroundImage: AssetImage(
@@ -232,7 +232,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                       ],
                                     ),
                                   ],
-                                )
+                                ),
                               ],
                             ),
                             const SizedBox(

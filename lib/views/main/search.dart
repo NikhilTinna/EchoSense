@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:social_media/constants/REST_api.dart';
 import 'package:social_media/controllers/authController.dart';
 import 'package:http/http.dart' as http;
+import 'package:social_media/views/main/random/random_profile.dart';
 
 import '../../constants/global.dart';
 import '../../controllers/userController.dart';
@@ -82,45 +83,60 @@ class _SearchState extends State<Search> {
                       : ListView.builder(
                           itemCount: userController.users.length,
                           itemBuilder: ((context, index) {
-                            return Column(
-                              children: [
-                                ListTile(
-                                  leading: userController.users[index]
-                                              ["picture"] ==
-                                          null
-                                      ? const CircleAvatar(
-                                          backgroundImage: AssetImage(
-                                              "assets/images/profile_picture.png"))
-                                      : CircleAvatar(
-                                          backgroundImage: NetworkImage(
-                                              userController.users[index]
-                                                  ["picture"])),
-                                  title: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 10, right: 8, top: 8, bottom: 8),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "${userController.users[index]["username"]}",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .displayMedium,
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Text(
-                                            "${userController.users[index]["name"].toString()}",
+                            return InkWell(
+                              onTap: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return RandomProfile(
+                                      user: userController.users[index]);
+                                }));
+                              },
+                              child: Column(
+                                children: [
+                                  ListTile(
+                                    leading: userController.users[index]
+                                                ["picture"] ==
+                                            null
+                                        ? const CircleAvatar(
+                                            backgroundImage: AssetImage(
+                                                "assets/images/profile_picture.png"))
+                                        : CircleAvatar(
+                                            backgroundImage: NetworkImage(
+                                                userController.users[index]
+                                                    ["picture"])),
+                                    title: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10,
+                                          right: 8,
+                                          top: 8,
+                                          bottom: 8),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "${userController.users[index]["username"]}",
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .bodySmall),
-                                      ],
+                                                .displayMedium,
+                                          ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Text(
+                                              "${userController.users[index]["name"].toString()}",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                  SizedBox(
+                                    height: 5,
+                                  )
+                                ],
+                              ),
                             );
                           }),
                         );
