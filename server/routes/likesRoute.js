@@ -154,9 +154,10 @@ likeRouter.post("/reply",async(req,res)=>{
 likeRouter.post("/reply/remove",async(req,res)=>{
     const {userId,replyId}=req.body
     const reply=await prisma.like.deleteMany({
-        where:{
-            userId,replyId
-        }
+        followerId_followingId: {
+            followerId: followerId,
+            followingId: followingId
+          }
     })
     res.json("like removed")
 })

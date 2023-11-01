@@ -10,6 +10,7 @@ import 'package:social_media/views/main/random/post_types/random_user_text_posts
 import 'package:http/http.dart' as http;
 
 import '../../../constants/global.dart';
+import '../../../controllers/authController.dart';
 
 class RandomProfile extends StatefulWidget {
   final dynamic user;
@@ -21,11 +22,16 @@ class RandomProfile extends StatefulWidget {
 
 class _RandomProfileState extends State<RandomProfile>
     with TickerProviderStateMixin {
+  AuthController authController = Get.put(AuthController());
   var posts = [];
   var likedPosts = [];
   var isLoading = false;
   var profileIndex = 0.obs;
   final scrollController = ScrollController();
+
+  var userFollowerDetails = [].obs;
+  var userFollowingDetails = [].obs;
+  var isFollowing = false.obs;
   void getUserPosts() async {
     setState(() {
       isLoading = true;
@@ -35,6 +41,21 @@ class _RandomProfileState extends State<RandomProfile>
     http.Response likedRes =
         await get("$url/likes/posts/user/${widget.user["id"]}");
     likedPosts = jsonDecode(likedRes.body);
+
+//get user followers;
+    http.Response followerRes =
+        await get("$url/following/follow/following/${widget.user["id"]}");
+    userFollowerDetails.value = jsonDecode(followerRes.body);
+
+//get user following
+    http.Response followingRes =
+        await get("$url/following/follow/follower/${widget.user["id"]}");
+    userFollowingDetails.value = jsonDecode(followingRes.body);
+
+    http.Response isFollowRes = await get(
+        "$url/following/isFollow/${authController.userId.value}/${widget.user["id"]}");
+    isFollowing.value = jsonDecode(isFollowRes.body);
+    print(isFollowing);
     setState(() {
       isLoading = false;
     });
@@ -124,9 +145,11 @@ class _RandomProfileState extends State<RandomProfile>
                         Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Text(
-                              "23",
-                              style: Theme.of(context).textTheme.bodyMedium,
+                            Obx(
+                              () => Text(
+                                userFollowerDetails[0].toString(),
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
                             ),
                             Text(
                               "Followers",
@@ -141,9 +164,11 @@ class _RandomProfileState extends State<RandomProfile>
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Text(
-                              "23",
-                              style: Theme.of(context).textTheme.bodyMedium,
+                            Obx(
+                              () => Text(
+                                userFollowingDetails[0].toString(),
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
                             ),
                             Text(
                               "Following",
@@ -169,7 +194,7 @@ class _RandomProfileState extends State<RandomProfile>
                       SizedBox(
                         height: Get.height * 0.16,
                         child: ListView.builder(
-                            physics: NeverScrollableScrollPhysics(),
+                            physics: const NeverScrollableScrollPhysics(),
                             controller: scrollController,
                             scrollDirection: Axis.horizontal,
                             itemCount: 2,
@@ -213,16 +238,145 @@ class _RandomProfileState extends State<RandomProfile>
                                             ],
                                           ),
                                           const SizedBox(
-                                            height: 8,
+                                            height: 16,
                                           ),
                                           Row(
                                             children: [
                                               SizedBox(
                                                 width: Get.width * 0.46,
-                                                child: ElevatedButton(
-                                                    onPressed: () {},
-                                                    child:
-                                                        const Text("Follow")),
+                                                child: Obx(
+                                                  () {
+                                                    if (isFollowing.value ==
+                                                        false) {
+                                                      return ElevatedButton(
+                                                          style: ElevatedButton
+                                                              .styleFrom(
+                                                            textStyle:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600),
+                                                            primary:
+                                                                Colors.green,
+                                                            onPrimary:
+                                                                Colors.white,
+                                                          ),
+                                                          onPressed: () async {
+                                                            await post(
+                                                                endpoint:
+                                                                    "$url/following/follow",
+                                                                body:
+                                                                    jsonEncode({
+                                                                  "followerId":
+                                                                      authController
+                                                                          .userId
+                                                                          .value,
+                                                                  "followingId":
+                                                                      widget.user[
+                                                                          "id"]
+                                                                }),
+                                                                success: () {});
+                                                            //get user followers;
+                                                            http.Response
+                                                                followerRes =
+                                                                await get(
+                                                                    "$url/following/follow/following/${widget.user["id"]}");
+                                                            userFollowerDetails
+                                                                    .value =
+                                                                jsonDecode(
+                                                                    followerRes
+                                                                        .body);
+
+//get user following
+                                                            http.Response
+                                                                followingRes =
+                                                                await get(
+                                                                    "$url/following/follow/follower/${widget.user["id"]}");
+                                                            userFollowingDetails
+                                                                    .value =
+                                                                jsonDecode(
+                                                                    followingRes
+                                                                        .body);
+
+                                                            http.Response
+                                                                isFollowRes =
+                                                                await get(
+                                                                    "$url/following/isFollow/${authController.userId.value}/${widget.user["id"]}");
+                                                            isFollowing.value =
+                                                                jsonDecode(
+                                                                    isFollowRes
+                                                                        .body);
+                                                          },
+                                                          child: const Text(
+                                                              "Follow"));
+                                                    } else {
+                                                      return ElevatedButton(
+                                                          style: ElevatedButton
+                                                              .styleFrom(
+                                                            textStyle:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600),
+                                                            primary: Colors.red,
+                                                            onPrimary:
+                                                                Colors.white,
+                                                          ),
+                                                          onPressed: () async {
+                                                            await post(
+                                                                endpoint:
+                                                                    "$url/following/unfollow",
+                                                                body:
+                                                                    jsonEncode({
+                                                                  "followerId":
+                                                                      authController
+                                                                          .userId
+                                                                          .value,
+                                                                  "followingId":
+                                                                      widget.user[
+                                                                          "id"]
+                                                                }),
+                                                                success: () {});
+                                                            //get user followers;
+                                                            http.Response
+                                                                followerRes =
+                                                                await get(
+                                                                    "$url/following/follow/following/${widget.user["id"]}");
+                                                            userFollowerDetails
+                                                                    .value =
+                                                                jsonDecode(
+                                                                    followerRes
+                                                                        .body);
+
+//get user following
+                                                            http.Response
+                                                                followingRes =
+                                                                await get(
+                                                                    "$url/following/follow/follower/${widget.user["id"]}");
+                                                            userFollowingDetails
+                                                                    .value =
+                                                                jsonDecode(
+                                                                    followingRes
+                                                                        .body);
+
+                                                            http.Response
+                                                                isFollowRes =
+                                                                await get(
+                                                                    "$url/following/isFollow/${authController.userId.value}/${widget.user["id"]}");
+                                                            isFollowing.value =
+                                                                jsonDecode(
+                                                                    isFollowRes
+                                                                        .body);
+                                                          },
+                                                          child: const Text(
+                                                              "Unfollow"));
+                                                    }
+                                                  },
+                                                ),
                                               ),
                                               SizedBox(
                                                 width: Get.width * 0.02,
@@ -230,6 +384,17 @@ class _RandomProfileState extends State<RandomProfile>
                                               SizedBox(
                                                 width: Get.width * 0.46,
                                                 child: ElevatedButton(
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      textStyle:
+                                                          const TextStyle(
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600),
+                                                      primary: Colors.blue,
+                                                      onPrimary: Colors.white,
+                                                    ),
                                                     onPressed: () {},
                                                     child:
                                                         const Text("Message")),
@@ -244,7 +409,8 @@ class _RandomProfileState extends State<RandomProfile>
                                           CrossAxisAlignment.start,
                                       children: [
                                         Padding(
-                                          padding: EdgeInsets.only(left: 3),
+                                          padding:
+                                              const EdgeInsets.only(left: 3),
                                           child: InkWell(
                                             onTap: () {
                                               scrollController.animateTo(
@@ -255,7 +421,7 @@ class _RandomProfileState extends State<RandomProfile>
 
                                               profileIndex.value = 0;
                                             },
-                                            child: Icon(
+                                            child: const Icon(
                                               Icons.arrow_back,
                                               color: Colors.red,
                                             ),
@@ -277,7 +443,7 @@ class _RandomProfileState extends State<RandomProfile>
                                     );
                             }),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
@@ -295,7 +461,7 @@ class _RandomProfileState extends State<RandomProfile>
                                       profileIndex == 0 ? Colors.blue : null),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Obx(

@@ -16,4 +16,9 @@ class UserController extends GetxController {
   //for user search functionality
   var isSearchLoading = false.obs;
   List users = [].obs;
+
+  //stores current users followers and following
+
+  List followers = [].obs;
+  List following = [].obs;
 }

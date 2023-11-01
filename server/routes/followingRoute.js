@@ -16,6 +16,33 @@ followingRouter.post("/follow",async(req,res)=>{
     res.json("User Followed")
 })
 
+//unfollow a user
+followingRouter.post("/unfollow",async(req,res)=>{
+    const {followerId,followingId}=req.body;
+    const unfollow=await prisma.following.deleteMany({
+        where:{
+            followerId,followingId
+        }
+    })
+    res.json("User Unfollowed")
+})
+
+
+//check if a user follows another user
+followingRouter.get("/isFollow/:followerId/:followingId",async(req,res)=>{
+const followerId=req.params.followerId;
+const followingId=req.params.followingId;
+
+const isFollowing=await prisma.following.findFirst({where:{followerId,followingId}})
+if(isFollowing)
+{
+    res.json(true)
+}
+else{
+    res.json(false)
+}
+})
+
 //get count of user followers and their details
 followingRouter.get("/follow/follower/:followerId",async (req,res)=>{
     const followerId=req.params.followerId;

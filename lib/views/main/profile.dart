@@ -12,12 +12,14 @@ import 'package:social_media/models/post.dart';
 import 'package:http/http.dart' as http;
 import 'package:social_media/views/authentication/login.dart';
 import 'package:social_media/views/main/edit_profile.dart';
+import 'package:social_media/views/main/home/user_followers.dart';
 import 'package:social_media/views/main/posts/image_posts.dart';
 import 'package:social_media/views/main/posts/like_post.dart';
 import 'package:social_media/views/main/posts/quote_posts.dart';
 import 'package:social_media/views/main/posts/text_posts.dart';
 
 import '../../controllers/mainController.dart';
+import 'home/user_following.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -30,6 +32,10 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
   UserController userController = Get.put(UserController());
   AuthController authController = Get.put(AuthController());
   MainController mainController = Get.put(MainController());
+
+  var userFollowingDetails = [].obs;
+  var userFollowerDetails = [].obs;
+
   var isLoading = false;
 
   void getUserProfileData() async {
@@ -39,7 +45,6 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
     http.Response res =
         await get("$url/user/details/${authController.userId.value}");
     userController.currentUserData.value = jsonDecode(res.body);
-    print(userController.currentUserData.value);
   }
 
   void getCurrentUserData() async {
@@ -49,6 +54,19 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
     userController.currentUserPosts.value = jsonDecode(res.body);
 
     userController.currentUserIsLoading.value = false;
+
+    //get user followers;
+    http.Response followerRes = await get(
+        "$url/following/follow/following/${authController.userId.value}");
+    userController.followers = jsonDecode(followerRes.body);
+
+//get user following
+    http.Response followingRes = await get(
+        "$url/following/follow/follower/${authController.userId.value}");
+    userController.following = jsonDecode(followingRes.body);
+
+    print(userController.followers);
+    print(userController.following);
 
     setState(() {
       isLoading = false;
@@ -190,45 +208,65 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                     SizedBox(
                                       width: Get.width * 0.09,
                                     ),
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(
-                                          "23",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium,
-                                        ),
-                                        Text(
-                                          "Followers",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall,
-                                        ),
-                                      ],
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                          return UserFollowers();
+                                        }));
+                                      },
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Text(
+                                            userController.followers[0]
+                                                .toString(),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium,
+                                          ),
+                                          Text(
+                                            "Followers",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                     SizedBox(
                                       width: Get.width * 0.09,
                                     ),
-                                    Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(
-                                          "23",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium,
-                                        ),
-                                        Text(
-                                          "Following",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall,
-                                        ),
-                                      ],
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                          return UserFollowing();
+                                        }));
+                                      },
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Text(
+                                            userController.following[0]
+                                                .toString(),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium,
+                                          ),
+                                          Text(
+                                            "Following",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
