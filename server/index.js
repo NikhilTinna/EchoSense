@@ -8,6 +8,7 @@ const postRouter=require("./routes/postRoute")
 const commentRouter=require("./routes/commentRoute")
 const replyRouter=require("./routes/repliesRoute")
 const likeRouter=require("./routes/likesRoute")
+const followingRouter=require("./routes/followingRoute")
 
 
 const app = express();
@@ -25,5 +26,6 @@ app.use("/posts",postRouter)
 app.use("/comments",commentRouter)
 app.use("/replies",replyRouter)
 app.use("/likes",likeRouter)
+app.use("/following",followingRouter)
 
 app.listen(3000, () => {});

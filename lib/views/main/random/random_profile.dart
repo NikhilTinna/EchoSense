@@ -24,7 +24,7 @@ class _RandomProfileState extends State<RandomProfile>
   var posts = [];
   var likedPosts = [];
   var isLoading = false;
-  var profileIndex = 0;
+  var profileIndex = 0.obs;
   final scrollController = ScrollController();
   void getUserPosts() async {
     setState(() {
@@ -198,9 +198,8 @@ class _RandomProfileState extends State<RandomProfile>
                                                       duration: const Duration(
                                                           milliseconds: 500),
                                                       curve: Curves.ease);
-                                                  setState(() {
-                                                    profileIndex = 1;
-                                                  });
+
+                                                  profileIndex.value = 1;
                                                 },
                                                 child: const Row(children: [
                                                   Text("Bio "),
@@ -253,9 +252,8 @@ class _RandomProfileState extends State<RandomProfile>
                                                   duration: const Duration(
                                                       milliseconds: 500),
                                                   curve: Curves.ease);
-                                              setState(() {
-                                                profileIndex = 0;
-                                              });
+
+                                              profileIndex.value = 0;
                                             },
                                             child: Icon(
                                               Icons.arrow_back,
@@ -284,28 +282,34 @@ class _RandomProfileState extends State<RandomProfile>
                       ),
                       Row(
                         children: [
-                          Container(
-                            width:
-                                15, // Adjust the size of the circle as needed
-                            height: 15,
-                            decoration: BoxDecoration(
-                                border:
-                                    Border.all(width: 1.5, color: Colors.blue),
-                                shape: BoxShape.circle,
-                                color: profileIndex == 0 ? Colors.blue : null),
+                          Obx(
+                            () => Container(
+                              width:
+                                  15, // Adjust the size of the circle as needed
+                              height: 15,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 1.5, color: Colors.blue),
+                                  shape: BoxShape.circle,
+                                  color:
+                                      profileIndex == 0 ? Colors.blue : null),
+                            ),
                           ),
                           SizedBox(
                             width: 2,
                           ),
-                          Container(
-                            width:
-                                15, // Adjust the size of the circle as needed
-                            height: 15,
-                            decoration: BoxDecoration(
-                                border:
-                                    Border.all(width: 1.5, color: Colors.blue),
-                                shape: BoxShape.circle,
-                                color: profileIndex == 1 ? Colors.blue : null),
+                          Obx(
+                            () => Container(
+                              width:
+                                  15, // Adjust the size of the circle as needed
+                              height: 15,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 1.5, color: Colors.blue),
+                                  shape: BoxShape.circle,
+                                  color:
+                                      profileIndex == 1 ? Colors.blue : null),
+                            ),
                           ),
                         ],
                       )
