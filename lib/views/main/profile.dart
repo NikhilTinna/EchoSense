@@ -260,14 +260,14 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                       const SizedBox(
                                         height: 8,
                                       ),
-                                      Text(
-                                        userController.currentUserData
-                                                    .value["bio"] ==
-                                                null
-                                            ? ""
-                                            : userController
-                                                .currentUserData.value["bio"],
-                                        style: const TextStyle(fontSize: 16),
+                                      SizedBox(
+                                        height: Get.height * 0.13,
+                                        child: Text(
+                                          userController.currentUserData
+                                                  .value["bio"] ??
+                                              "",
+                                          style: const TextStyle(fontSize: 16),
+                                        ),
                                       )
                                     ],
                                   ),

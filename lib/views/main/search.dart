@@ -87,6 +87,7 @@ class _SearchState extends State<Search> {
                               onTap: () {
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
+                                  FocusManager.instance.primaryFocus?.unfocus();
                                   return RandomProfile(
                                       user: userController.users[index]);
                                 }));

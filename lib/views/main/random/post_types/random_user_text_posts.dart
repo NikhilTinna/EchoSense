@@ -2,52 +2,45 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:social_media/controllers/authController.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../constants/REST_api.dart';
-import '../../../constants/global.dart';
-import '../../../controllers/userController.dart';
+import '../../../../constants/REST_api.dart';
+import '../../../../constants/global.dart';
+import '../../../../controllers/authController.dart';
 
-class TextPosts extends StatefulWidget {
-  const TextPosts({super.key});
+class RandomUserTextPosts extends StatefulWidget {
+  final String userId;
+  final List userPosts;
+  const RandomUserTextPosts(
+      {required this.userId, required this.userPosts, super.key});
 
   @override
-  State<TextPosts> createState() => _TextPostsState();
+  State<RandomUserTextPosts> createState() => _RandomUserTextPostsState();
 }
 
-class _TextPostsState extends State<TextPosts> {
-  UserController userController = Get.put(UserController());
+class _RandomUserTextPostsState extends State<RandomUserTextPosts> {
   AuthController authController = Get.put(AuthController());
-  List<dynamic> textPosts = [];
+  var likes = [];
+  var isLikedByUser = [];
   var isLoading = false;
-
-  void getTextLikes() async {
+  var textPosts = [];
+  void getPostsData() async {
     setState(() {
       isLoading = true;
     });
-    userController.likes.value = [];
-    userController.isLikedByUser.value = [];
-    for (int i = 0; i < userController.currentUserPosts.value.length; i++) {
-      if (userController.currentUserPosts.value[i]["imageurl"] == null &&
-          userController.currentUserPosts.value[i]["quotedPostId"] == null) {
-        setState(() {
-          textPosts.add(userController.currentUserPosts.value[i]);
-        });
-      }
-    }
+    textPosts = widget.userPosts
+        .where((element) =>
+            element["imageurl"] == null && element["quotedPostId"] == null)
+        .toList();
 
     for (var element in textPosts) {
       http.Response res = await get("$url/likes/post/${element["id"]}");
       http.Response likedByUserRes = await get(
           "$url/likes/post/likedByUser/${authController.userId.value}/${element["id"]}");
 
-      userController.likes.value.add(res.body);
-      userController.isLikedByUser.value.add(likedByUserRes.body);
+      likes.add(res.body);
+      isLikedByUser.add(likedByUserRes.body);
     }
-    print(userController.likes.value);
-    print(userController.isLikedByUser.value);
-
     setState(() {
       isLoading = false;
     });
@@ -64,13 +57,12 @@ class _TextPostsState extends State<TextPosts> {
 
     http.Response res = await get("$url/likes/post/${textPosts[index]["id"]}");
 
-    userController.likes.value[index] = res.body;
+    likes[index] = res.body;
 
     http.Response likedByUserRes = await get(
         "$url/likes/post/likedByUser/${authController.userId.value}/${textPosts[index]["id"]}");
-    userController.isLikedByUser.value[index] = likedByUserRes.body;
-    print(userController.isLikedByUser.value[index]);
-    print(userController.likes.value[index]);
+    isLikedByUser[index] = likedByUserRes.body;
+
     setState(() {});
   }
 
@@ -85,34 +77,33 @@ class _TextPostsState extends State<TextPosts> {
 
     http.Response res = await get("$url/likes/post/${textPosts[index]["id"]}");
 
-    userController.likes.value[index] = res.body;
+    likes[index] = res.body;
 
     http.Response likedByUserRes = await get(
         "$url/likes/post/likedByUser/${authController.userId.value}/${textPosts[index]["id"]}");
-    userController.isLikedByUser.value[index] = likedByUserRes.body;
+    isLikedByUser[index] = likedByUserRes.body;
 
     setState(() {});
   }
 
   @override
   void initState() {
-    getTextLikes();
-
+    getPostsData();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
       body: isLoading
-          ? const Center(
+          ? Center(
               child: CircularProgressIndicator(
                 color: Colors.grey,
               ),
             )
-          : Container(
-              margin: const EdgeInsets.only(top: 10),
+          : SafeArea(
+              child: Container(
+              margin: EdgeInsets.only(top: 10),
               child: ListView.builder(
                   itemCount: textPosts.length,
                   itemBuilder: (context, index) {
@@ -126,8 +117,7 @@ class _TextPostsState extends State<TextPosts> {
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10)),
                                   width: Get.width * 0.12,
-                                  child: userController.currentUserData
-                                              .value["picture"] ==
+                                  child: textPosts[index]["user"]["picture"] ==
                                           null
                                       ? ClipRRect(
                                           borderRadius:
@@ -141,9 +131,8 @@ class _TextPostsState extends State<TextPosts> {
                                       : ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(10),
-                                          child: Image.network(userController
-                                              .currentUserData
-                                              .value["picture"]),
+                                          child: Image.network(textPosts[index]
+                                              ["user"]["picture"]),
                                         )),
                               SizedBox(
                                 width: Get.width * 0.04,
@@ -153,14 +142,13 @@ class _TextPostsState extends State<TextPosts> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    userController
-                                        .currentUserData.value["name"],
+                                    textPosts[index]["user"]["name"],
                                     style: Theme.of(context)
                                         .textTheme
                                         .displayMedium,
                                   ),
                                   Text(
-                                    "@${userController.currentUserData.value["username"]}",
+                                    "@${textPosts[index]["user"]["username"]}",
                                     style: Theme.of(context)
                                         .textTheme
                                         .displaySmall,
@@ -196,29 +184,21 @@ class _TextPostsState extends State<TextPosts> {
                                 ),
                                 Row(
                                   children: [
-                                    Obx(
-                                      () => InkWell(
-                                          onTap: () async {
-                                            userController.isLikedByUser
-                                                        .value[index] ==
-                                                    "false"
-                                                ? likePost(index)
-                                                : dislikePost(index);
-                                          },
-                                          child: Icon(userController
-                                                      .isLikedByUser
-                                                      .value[index] ==
-                                                  "false"
-                                              ? Icons.favorite_outline
-                                              : Icons.favorite)),
-                                    ),
+                                    InkWell(
+                                        onTap: () async {
+                                          isLikedByUser[index] == "false"
+                                              ? likePost(index)
+                                              : dislikePost(index);
+                                        },
+                                        child: Icon(
+                                            isLikedByUser[index] == "false"
+                                                ? Icons.favorite_outline
+                                                : Icons.favorite)),
                                     const SizedBox(
                                       width: 3,
                                     ),
-                                    Obx(
-                                      () => Text(
-                                        userController.likes.value[index],
-                                      ),
+                                    Text(
+                                      likes[index],
                                     ),
                                     SizedBox(
                                       width: Get.width * 0.1,
@@ -255,7 +235,7 @@ class _TextPostsState extends State<TextPosts> {
                       ),
                     );
                   }),
-            ),
+            )),
     );
   }
 }
