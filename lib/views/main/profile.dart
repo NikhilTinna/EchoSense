@@ -35,6 +35,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
 
   var userFollowingDetails = [].obs;
   var userFollowerDetails = [].obs;
+  var postCount = 0;
 
   var isLoading = false;
 
@@ -67,6 +68,10 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
 
     print(userController.followers);
     print(userController.following);
+
+    http.Response postCountResponse =
+        await get("$url/posts/count/${authController.userId.value}");
+    postCount = jsonDecode(postCountResponse.body);
 
     setState(() {
       isLoading = false;
@@ -188,7 +193,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                           MainAxisAlignment.spaceEvenly,
                                       children: [
                                         Text(
-                                          "23",
+                                          postCount.toString(),
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyMedium,

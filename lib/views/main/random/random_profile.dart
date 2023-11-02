@@ -8,6 +8,8 @@ import 'package:social_media/views/main/random/post_types/random_user_like_posts
 import 'package:social_media/views/main/random/post_types/random_user_quote_posts.dart';
 import 'package:social_media/views/main/random/post_types/random_user_text_posts.dart';
 import 'package:http/http.dart' as http;
+import 'package:social_media/views/main/random/random_user_followers.dart';
+import 'package:social_media/views/main/random/random_user_following.dart';
 
 import '../../../constants/global.dart';
 import '../../../controllers/authController.dart';
@@ -27,6 +29,7 @@ class _RandomProfileState extends State<RandomProfile>
   var likedPosts = [];
   var isLoading = false;
   var profileIndex = 0.obs;
+  var postCount = 0;
   final scrollController = ScrollController();
 
   var userFollowerDetails = [].obs;
@@ -55,6 +58,11 @@ class _RandomProfileState extends State<RandomProfile>
     http.Response isFollowRes = await get(
         "$url/following/isFollow/${authController.userId.value}/${widget.user["id"]}");
     isFollowing.value = jsonDecode(isFollowRes.body);
+
+    http.Response postCountResponse =
+        await get("$url/posts/count/${widget.user["id"]}");
+    postCount = jsonDecode(postCountResponse.body);
+
     print(isFollowing);
     setState(() {
       isLoading = false;
@@ -130,7 +138,7 @@ class _RandomProfileState extends State<RandomProfile>
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text(
-                              "23",
+                              postCount.toString(),
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             Text(
@@ -142,39 +150,61 @@ class _RandomProfileState extends State<RandomProfile>
                         SizedBox(
                           width: Get.width * 0.09,
                         ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Obx(
-                              () => Text(
-                                userFollowerDetails[0].toString(),
-                                style: Theme.of(context).textTheme.bodyMedium,
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return RandomUserFollowers(
+                                randomUserFollowers: userFollowerDetails[1],
+                                name: widget.user["name"],
+                              );
+                            }));
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Obx(
+                                () => Text(
+                                  userFollowerDetails[0].toString(),
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
                               ),
-                            ),
-                            Text(
-                              "Followers",
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
+                              Text(
+                                "Followers",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
                         ),
                         SizedBox(
                           width: Get.width * 0.09,
                         ),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Obx(
-                              () => Text(
-                                userFollowingDetails[0].toString(),
-                                style: Theme.of(context).textTheme.bodyMedium,
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return RandomUserFollowing(
+                                randomUserFollowing: userFollowingDetails[1],
+                                name: widget.user["name"],
+                              );
+                            }));
+                          },
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Obx(
+                                () => Text(
+                                  userFollowingDetails[0].toString(),
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
                               ),
-                            ),
-                            Text(
-                              "Following",
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
+                              Text(
+                                "Following",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     )

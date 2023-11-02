@@ -100,5 +100,16 @@ postRouter.post("/reply/image", upload.single("image"), async (req, res) => {
   );
 });
 
+//get total no of a user's post
+postRouter.get("/count/:userId",async(req,res)=>{
+  const userId=req.params.userId
+  const postCount=await prisma.post.count({
+    where:{
+      userId
+    }
+  })
+  res.json(postCount);
+})
+
 
 module.exports = postRouter;
