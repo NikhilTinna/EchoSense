@@ -14,7 +14,7 @@ class _UserFollowersState extends State<UserFollowers> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Your Followers")),
+      appBar: AppBar(title: const Text("Your Followers")),
       body: SafeArea(
           child: Container(
         margin:
@@ -43,7 +43,7 @@ class _UserFollowersState extends State<UserFollowers> {
                               "${userController.followers[1][index]["follower"]["name"]}",
                               style: Theme.of(context).textTheme.displayMedium,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 5,
                             ),
                             Text(
@@ -62,7 +62,7 @@ class _UserFollowersState extends State<UserFollowers> {
                           ),
                           onPressed: () async {},
                           child: const Text("Follow"))),
-                  SizedBox(
+                  const SizedBox(
                     height: 5,
                   ),
                 ],

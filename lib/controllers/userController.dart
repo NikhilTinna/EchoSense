@@ -19,6 +19,6 @@ class UserController extends GetxController {
 
   //stores current users followers and following
 
-  List followers = [].obs;
-  List following = [].obs;
+  RxList<dynamic> followers = [].obs;
+  RxList<dynamic> following = [].obs;
 }

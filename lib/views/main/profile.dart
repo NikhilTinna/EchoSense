@@ -58,12 +58,12 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
     //get user followers;
     http.Response followerRes = await get(
         "$url/following/follow/following/${authController.userId.value}");
-    userController.followers = jsonDecode(followerRes.body);
+    userController.followers.value = jsonDecode(followerRes.body);
 
 //get user following
     http.Response followingRes = await get(
         "$url/following/follow/follower/${authController.userId.value}");
-    userController.following = jsonDecode(followingRes.body);
+    userController.following.value = jsonDecode(followingRes.body);
 
     print(userController.followers);
     print(userController.following);
@@ -161,26 +161,22 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Obx(() {
-                                  if (userController
-                                          .currentUserData.value["picture"] ==
-                                      null) {
-                                    return const CircleAvatar(
-                                      radius: 35,
-                                      backgroundColor: Colors.white,
-                                      backgroundImage: AssetImage(
-                                          "assets/images/profile_picture.png"),
-                                    );
-                                  } else {
-                                    return CircleAvatar(
-                                      radius: 35,
-                                      backgroundColor: Colors.white,
-                                      backgroundImage: NetworkImage(
-                                          userController.currentUserData
-                                              .value["picture"]),
-                                    );
-                                  }
-                                }),
+                                userController
+                                            .currentUserData.value["picture"] ==
+                                        null
+                                    ? const CircleAvatar(
+                                        radius: 35,
+                                        backgroundColor: Colors.white,
+                                        backgroundImage: AssetImage(
+                                            "assets/images/profile_picture.png"),
+                                      )
+                                    : CircleAvatar(
+                                        radius: 35,
+                                        backgroundColor: Colors.white,
+                                        backgroundImage: NetworkImage(
+                                            userController.currentUserData
+                                                .value["picture"]),
+                                      ),
                                 SizedBox(
                                   width: Get.width * 0.1,
                                 ),
@@ -220,12 +216,14 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceEvenly,
                                         children: [
-                                          Text(
-                                            userController.followers[0]
-                                                .toString(),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium,
+                                          Obx(
+                                            () => Text(
+                                              userController.followers[0]
+                                                  .toString(),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium,
+                                            ),
                                           ),
                                           Text(
                                             "Followers",
@@ -244,7 +242,9 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                         Navigator.push(context,
                                             MaterialPageRoute(
                                                 builder: (context) {
-                                          return UserFollowing();
+                                          return UserFollowing(
+                                              userFollowing:
+                                                  userController.following[1]);
                                         }));
                                       },
                                       child: Column(
@@ -252,12 +252,14 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceEvenly,
                                         children: [
-                                          Text(
-                                            userController.following[0]
-                                                .toString(),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium,
+                                          Obx(
+                                            () => Text(
+                                              userController.following[0]
+                                                  .toString(),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium,
+                                            ),
                                           ),
                                           Text(
                                             "Following",
