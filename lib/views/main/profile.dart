@@ -209,7 +209,10 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                         Navigator.push(context,
                                             MaterialPageRoute(
                                                 builder: (context) {
-                                          return UserFollowers();
+                                          return UserFollowers(
+                                            userFollowers:
+                                                userController.followers[1],
+                                          );
                                         }));
                                       },
                                       child: Column(

@@ -32,13 +32,6 @@ class _LikePostState extends State<LikePost> {
 
     quotePosts = jsonDecode(res.body);
 
-    for (int i = 0; i < allPosts.length; i++) {
-      if (allPosts[i]["quotedPostId"] != null) {
-        setState(() {
-          quotePosts.add(allPosts[i]);
-        });
-      }
-    }
     print(quotePosts);
 
     for (var element in quotePosts) {
