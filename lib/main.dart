@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -13,8 +14,13 @@ import 'package:social_media/views/authentication/otp.dart';
 import 'package:social_media/views/main/home.dart';
 import 'package:social_media/views/main/navigation_bar.dart';
 
+import 'firebase_options.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   AuthController authController = Get.put(AuthController());
   UserController userController = Get.put(UserController());
 

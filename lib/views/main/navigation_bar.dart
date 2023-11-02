@@ -4,6 +4,7 @@ import 'package:social_media/views/main/add_post.dart';
 import 'package:social_media/views/main/home.dart';
 import 'package:social_media/views/main/notifications.dart';
 import 'package:social_media/views/main/profile.dart';
+import 'package:social_media/views/main/random/chats/chat_list.dart';
 import 'package:social_media/views/main/search.dart';
 
 import '../../controllers/authController.dart';
@@ -15,7 +16,7 @@ class UserNavigationBar extends StatelessWidget {
     const Home(),
     const Search(),
     const AddPost(),
-    const Notifications(),
+    const ChatList(),
     const Profile()
   ];
 

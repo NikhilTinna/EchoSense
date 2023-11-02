@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:social_media/constants/REST_api.dart';
+import 'package:social_media/views/main/edit_profile.dart';
 import 'package:social_media/views/main/random/post_types/random_user_image_posts.dart';
 import 'package:social_media/views/main/random/post_types/random_user_like_posts.dart';
 import 'package:social_media/views/main/random/post_types/random_user_quote_posts.dart';
@@ -13,6 +14,7 @@ import 'package:social_media/views/main/random/random_user_following.dart';
 
 import '../../../constants/global.dart';
 import '../../../controllers/authController.dart';
+import 'chats/individual_chat.dart';
 
 class RandomProfile extends StatefulWidget {
   final dynamic user;
@@ -270,15 +272,182 @@ class _RandomProfileState extends State<RandomProfile>
                                           const SizedBox(
                                             height: 16,
                                           ),
-                                          Row(
-                                            children: [
-                                              SizedBox(
-                                                width: Get.width * 0.46,
-                                                child: Obx(
-                                                  () {
-                                                    if (isFollowing.value ==
-                                                        false) {
-                                                      return ElevatedButton(
+                                          widget.user["id"] ==
+                                                  authController.userId.value
+                                              ? SizedBox(
+                                                  width: Get.width * 0.95,
+                                                  child: ElevatedButton(
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        textStyle:
+                                                            const TextStyle(
+                                                                fontSize: 15,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600),
+                                                        primary: Colors.blue,
+                                                        onPrimary: Colors.white,
+                                                      ),
+                                                      onPressed: () {
+                                                        Navigator.push(context,
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) {
+                                                          return EditProfile();
+                                                        }));
+                                                      },
+                                                      child: const Text(
+                                                          "Edit Your Profile")),
+                                                )
+                                              : Row(
+                                                  children: [
+                                                    SizedBox(
+                                                      width: Get.width * 0.46,
+                                                      child: Obx(
+                                                        () {
+                                                          if (isFollowing
+                                                                  .value ==
+                                                              false) {
+                                                            return ElevatedButton(
+                                                                style: ElevatedButton
+                                                                    .styleFrom(
+                                                                  textStyle: const TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600),
+                                                                  primary: Colors
+                                                                      .green,
+                                                                  onPrimary:
+                                                                      Colors
+                                                                          .white,
+                                                                ),
+                                                                onPressed:
+                                                                    () async {
+                                                                  await post(
+                                                                      endpoint:
+                                                                          "$url/following/follow",
+                                                                      body:
+                                                                          jsonEncode({
+                                                                        "followerId": authController
+                                                                            .userId
+                                                                            .value,
+                                                                        "followingId":
+                                                                            widget.user["id"]
+                                                                      }),
+                                                                      success:
+                                                                          () {});
+                                                                  //get user followers;
+                                                                  http.Response
+                                                                      followerRes =
+                                                                      await get(
+                                                                          "$url/following/follow/following/${widget.user["id"]}");
+                                                                  userFollowerDetails
+                                                                          .value =
+                                                                      jsonDecode(
+                                                                          followerRes
+                                                                              .body);
+
+//get user following
+                                                                  http.Response
+                                                                      followingRes =
+                                                                      await get(
+                                                                          "$url/following/follow/follower/${widget.user["id"]}");
+                                                                  userFollowingDetails
+                                                                          .value =
+                                                                      jsonDecode(
+                                                                          followingRes
+                                                                              .body);
+
+                                                                  http.Response
+                                                                      isFollowRes =
+                                                                      await get(
+                                                                          "$url/following/isFollow/${authController.userId.value}/${widget.user["id"]}");
+                                                                  isFollowing
+                                                                          .value =
+                                                                      jsonDecode(
+                                                                          isFollowRes
+                                                                              .body);
+                                                                },
+                                                                child: const Text(
+                                                                    "Follow"));
+                                                          } else {
+                                                            return ElevatedButton(
+                                                                style: ElevatedButton
+                                                                    .styleFrom(
+                                                                  textStyle: const TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600),
+                                                                  primary:
+                                                                      Colors
+                                                                          .red,
+                                                                  onPrimary:
+                                                                      Colors
+                                                                          .white,
+                                                                ),
+                                                                onPressed:
+                                                                    () async {
+                                                                  await post(
+                                                                      endpoint:
+                                                                          "$url/following/unfollow",
+                                                                      body:
+                                                                          jsonEncode({
+                                                                        "followerId": authController
+                                                                            .userId
+                                                                            .value,
+                                                                        "followingId":
+                                                                            widget.user["id"]
+                                                                      }),
+                                                                      success:
+                                                                          () {});
+                                                                  //get user followers;
+                                                                  http.Response
+                                                                      followerRes =
+                                                                      await get(
+                                                                          "$url/following/follow/following/${widget.user["id"]}");
+                                                                  userFollowerDetails
+                                                                          .value =
+                                                                      jsonDecode(
+                                                                          followerRes
+                                                                              .body);
+
+//get user following
+                                                                  http.Response
+                                                                      followingRes =
+                                                                      await get(
+                                                                          "$url/following/follow/follower/${widget.user["id"]}");
+                                                                  userFollowingDetails
+                                                                          .value =
+                                                                      jsonDecode(
+                                                                          followingRes
+                                                                              .body);
+
+                                                                  http.Response
+                                                                      isFollowRes =
+                                                                      await get(
+                                                                          "$url/following/isFollow/${authController.userId.value}/${widget.user["id"]}");
+                                                                  isFollowing
+                                                                          .value =
+                                                                      jsonDecode(
+                                                                          isFollowRes
+                                                                              .body);
+                                                                },
+                                                                child: const Text(
+                                                                    "Unfollow"));
+                                                          }
+                                                        },
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: Get.width * 0.02,
+                                                    ),
+                                                    SizedBox(
+                                                      width: Get.width * 0.46,
+                                                      child: ElevatedButton(
                                                           style: ElevatedButton
                                                               .styleFrom(
                                                             textStyle:
@@ -289,148 +458,50 @@ class _RandomProfileState extends State<RandomProfile>
                                                                         FontWeight
                                                                             .w600),
                                                             primary:
-                                                                Colors.green,
+                                                                Colors.blue,
                                                             onPrimary:
                                                                 Colors.white,
                                                           ),
-                                                          onPressed: () async {
-                                                            await post(
-                                                                endpoint:
-                                                                    "$url/following/follow",
-                                                                body:
-                                                                    jsonEncode({
-                                                                  "followerId":
-                                                                      authController
-                                                                          .userId
-                                                                          .value,
-                                                                  "followingId":
-                                                                      widget.user[
-                                                                          "id"]
-                                                                }),
-                                                                success: () {});
-                                                            //get user followers;
-                                                            http.Response
-                                                                followerRes =
-                                                                await get(
-                                                                    "$url/following/follow/following/${widget.user["id"]}");
-                                                            userFollowerDetails
-                                                                    .value =
-                                                                jsonDecode(
-                                                                    followerRes
-                                                                        .body);
-
-//get user following
-                                                            http.Response
-                                                                followingRes =
-                                                                await get(
-                                                                    "$url/following/follow/follower/${widget.user["id"]}");
-                                                            userFollowingDetails
-                                                                    .value =
-                                                                jsonDecode(
-                                                                    followingRes
-                                                                        .body);
-
-                                                            http.Response
-                                                                isFollowRes =
-                                                                await get(
-                                                                    "$url/following/isFollow/${authController.userId.value}/${widget.user["id"]}");
-                                                            isFollowing.value =
-                                                                jsonDecode(
-                                                                    isFollowRes
-                                                                        .body);
+                                                          onPressed: () {
+                                                            String chatId;
+                                                            if (authController
+                                                                    .userId
+                                                                    .value
+                                                                    .compareTo(widget
+                                                                            .user[
+                                                                        "id"]) ==
+                                                                1) {
+                                                              chatId = widget
+                                                                          .user[
+                                                                      "id"] +
+                                                                  authController
+                                                                      .userId
+                                                                      .value;
+                                                            } else {
+                                                              chatId = authController
+                                                                      .userId
+                                                                      .value +
+                                                                  widget.user[
+                                                                      "id"];
+                                                            }
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) {
+                                                              return IndividualChat(
+                                                                combinedId:
+                                                                    chatId,
+                                                                receiverInfo:
+                                                                    widget.user,
+                                                              );
+                                                            }));
                                                           },
                                                           child: const Text(
-                                                              "Follow"));
-                                                    } else {
-                                                      return ElevatedButton(
-                                                          style: ElevatedButton
-                                                              .styleFrom(
-                                                            textStyle:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        15,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600),
-                                                            primary: Colors.red,
-                                                            onPrimary:
-                                                                Colors.white,
-                                                          ),
-                                                          onPressed: () async {
-                                                            await post(
-                                                                endpoint:
-                                                                    "$url/following/unfollow",
-                                                                body:
-                                                                    jsonEncode({
-                                                                  "followerId":
-                                                                      authController
-                                                                          .userId
-                                                                          .value,
-                                                                  "followingId":
-                                                                      widget.user[
-                                                                          "id"]
-                                                                }),
-                                                                success: () {});
-                                                            //get user followers;
-                                                            http.Response
-                                                                followerRes =
-                                                                await get(
-                                                                    "$url/following/follow/following/${widget.user["id"]}");
-                                                            userFollowerDetails
-                                                                    .value =
-                                                                jsonDecode(
-                                                                    followerRes
-                                                                        .body);
-
-//get user following
-                                                            http.Response
-                                                                followingRes =
-                                                                await get(
-                                                                    "$url/following/follow/follower/${widget.user["id"]}");
-                                                            userFollowingDetails
-                                                                    .value =
-                                                                jsonDecode(
-                                                                    followingRes
-                                                                        .body);
-
-                                                            http.Response
-                                                                isFollowRes =
-                                                                await get(
-                                                                    "$url/following/isFollow/${authController.userId.value}/${widget.user["id"]}");
-                                                            isFollowing.value =
-                                                                jsonDecode(
-                                                                    isFollowRes
-                                                                        .body);
-                                                          },
-                                                          child: const Text(
-                                                              "Unfollow"));
-                                                    }
-                                                  },
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                width: Get.width * 0.02,
-                                              ),
-                                              SizedBox(
-                                                width: Get.width * 0.46,
-                                                child: ElevatedButton(
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      textStyle:
-                                                          const TextStyle(
-                                                              fontSize: 15,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600),
-                                                      primary: Colors.blue,
-                                                      onPrimary: Colors.white,
+                                                              "Message")),
                                                     ),
-                                                    onPressed: () {},
-                                                    child:
-                                                        const Text("Message")),
-                                              ),
-                                            ],
-                                          ),
+                                                  ],
+                                                ),
                                         ],
                                       ),
                                     )

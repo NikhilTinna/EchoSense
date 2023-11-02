@@ -18,6 +18,8 @@ dependencies:
   image_picker:
   intl:
   scrollable_positioned_list:
+  firebase_core:
+  cloud_firestore:
 
 dev_dependencies:
   flutter_test:
