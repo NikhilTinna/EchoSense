@@ -27,11 +27,13 @@ class _FeedState extends State<Feed> {
 
   bool isLoading = false;
   var posts = [];
-  var postCommentsCount = [];
+
   void getAllPostsData() async {
+    mainController.postCommentsCount = [].obs;
     setState(() {
       isLoading = true;
     });
+
     http.Response res =
         await get("$url/posts/random/${authController.userId.value}");
 
@@ -50,7 +52,7 @@ class _FeedState extends State<Feed> {
       http.Response commentCountRes =
           await get("$url/comments/count/${element["id"]}");
 
-      postCommentsCount.add(commentCountRes.body);
+      mainController.postCommentsCount.add(commentCountRes.body);
     }
     setState(() {
       isLoading = false;
@@ -208,6 +210,7 @@ class _FeedState extends State<Feed> {
                                         onTap: () {
                                           Get.to(PostComments(
                                             postId: posts[index]["id"],
+                                            index: index,
                                           ));
                                         },
                                         child: Container(
@@ -436,8 +439,10 @@ class _FeedState extends State<Feed> {
                                                               builder:
                                                                   (context) {
                                                         return PostComments(
-                                                            postId: posts[index]
-                                                                ["id"]);
+                                                          postId: posts[index]
+                                                              ["id"],
+                                                          index: index,
+                                                        );
                                                       }));
                                                     },
                                                     child: const Icon(Icons
@@ -446,9 +451,13 @@ class _FeedState extends State<Feed> {
                                                   const SizedBox(
                                                     width: 3,
                                                   ),
-                                                  Text(
-                                                    postCommentsCount[index]
-                                                        .toString(),
+                                                  Obx(
+                                                    () => Text(
+                                                      mainController
+                                                          .postCommentsCount[
+                                                              index]
+                                                          .toString(),
+                                                    ),
                                                   ),
                                                   SizedBox(
                                                     width: Get.width * 0.1,

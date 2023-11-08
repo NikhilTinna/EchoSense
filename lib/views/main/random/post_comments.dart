@@ -16,7 +16,8 @@ import 'comment_replies.dart';
 
 class PostComments extends StatefulWidget {
   final String postId;
-  const PostComments({required this.postId});
+  final int index;
+  const PostComments({required this.postId, required this.index});
 
   @override
   State<PostComments> createState() => _PostCommentsState();
@@ -260,6 +261,11 @@ class _PostCommentsState extends State<PostComments> {
 
                                 mainController.commentRepliesCount.insert(0, 0);
                               }
+
+                              http.Response commentCountResponse = await get(
+                                  "$url/comments/count/${widget.postId}");
+                              mainController.postCommentsCount[widget.index] =
+                                  commentCountResponse.body;
 
                               setState(() {});
                             }

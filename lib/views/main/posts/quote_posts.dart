@@ -47,9 +47,7 @@ class _QuotePostsState extends State<QuotePosts> {
       likes.add(res.body);
       isLikedByUser.add(likedByUserRes.body);
     }
-    print(likes);
-    print(isLikedByUser);
-
+    print(quotePosts);
     setState(() {
       isLoading = false;
     });
@@ -234,7 +232,9 @@ class _QuotePostsState extends State<QuotePosts> {
                                                         BorderRadius.circular(
                                                             10)),
                                                 width: Get.width * 0.08,
-                                                child: quotePosts[index]["user"]
+                                                child: quotePosts[index][
+                                                                    "quotePost"]
+                                                                ["user"]
                                                             ["picture"] ==
                                                         null
                                                     ? ClipRRect(

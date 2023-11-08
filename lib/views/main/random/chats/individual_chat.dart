@@ -62,7 +62,8 @@ class _IndividualChatState extends State<IndividualChat> {
         "bottom_bar": "#2A3C4F",
         "background": "#1F282E",
         "icon": "#505E78",
-        "text_box": "#19222E"
+        "text_box": "#19222E",
+        "input_text": "#FFFFFF"
       });
       await userInteractionData.set(widget.receiverInfo);
       http.Response res =
@@ -181,7 +182,9 @@ class _IndividualChatState extends State<IndividualChat> {
                                                           "background":
                                                               "#1F282E",
                                                           "icon": "#505E78",
-                                                          "text_box": "#19222E"
+                                                          "text_box": "#19222E",
+                                                          "input_text":
+                                                              "#FFFFFF"
                                                         });
                                                       },
                                                       child: Text(
@@ -224,7 +227,9 @@ class _IndividualChatState extends State<IndividualChat> {
                                                           "background":
                                                               "#FFFFFF",
                                                           "icon": "#6D707E",
-                                                          "text_box": "#FFFFFF"
+                                                          "text_box": "#FFFFFF",
+                                                          "input_text":
+                                                              "#000000"
                                                         });
                                                       },
                                                       child: Text(
@@ -389,6 +394,16 @@ class _IndividualChatState extends State<IndividualChat> {
                                         height: Get.height * 0.05,
                                         width: Get.width * 0.76,
                                         child: TextField(
+                                          style: TextStyle(
+                                            color: Color(
+                                              int.parse(
+                                                client["input_text"].replaceAll(
+                                                  "#",
+                                                  "0xFF",
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                           controller: messageController,
                                           decoration: InputDecoration(
                                             contentPadding: EdgeInsets.only(

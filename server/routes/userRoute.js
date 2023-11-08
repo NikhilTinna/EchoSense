@@ -58,8 +58,8 @@ userRouter.post("/verify", async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: "Gmail", // Use the service appropriate for your email provider
       auth: {
-        user: "abdulqaderpatel2002@gmail.com", // Your email address
-        pass: "efbj tvqv wjqg azin", // Your email password (or an app-specific password)
+        user: process.env.EMAIL_USERNAME, // Your email address
+        pass: process.env.EMAIL_PASSWORD, // Your email password (or an app-specific password)
       },
     });
 

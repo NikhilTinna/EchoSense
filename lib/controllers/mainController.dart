@@ -10,4 +10,7 @@ class MainController extends GetxController {
 
   //for user comments
   List commentRepliesCount = [].obs;
+
+  //for user posts
+  List postCommentsCount = [].obs;
 }
