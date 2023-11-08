@@ -38,6 +38,7 @@ class _PostCommentsState extends State<PostComments> {
   List isReplyLikedByUser = [];
 
   void getComments() async {
+    print(widget.postId);
     setState(() {
       isLoading = true;
     });
@@ -45,8 +46,10 @@ class _PostCommentsState extends State<PostComments> {
     mainController.commentRepliesCount = [].obs;
 
     http.Response res = await get("$url/comments/${widget.postId}");
+    print(res.body);
 
     comments = jsonDecode(res.body);
+    print(comments);
     for (var element in comments) {
       http.Response res = await get("$url/likes/comment/${element["id"]}");
       commentLikes.add(res.body);

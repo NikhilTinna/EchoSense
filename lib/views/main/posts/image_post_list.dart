@@ -6,8 +6,10 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:social_media/constants/REST_api.dart';
 import 'package:social_media/constants/global.dart';
 import 'package:social_media/controllers/authController.dart';
+import 'package:social_media/controllers/mainController.dart';
 import 'package:social_media/controllers/userController.dart';
 import 'package:http/http.dart' as http;
+import 'package:social_media/views/main/random/post_comments.dart';
 
 class ImagePostList extends StatefulWidget {
   final List<dynamic> images;
@@ -22,9 +24,11 @@ class ImagePostList extends StatefulWidget {
 class _ImagePostListState extends State<ImagePostList> {
   UserController userController = Get.put(UserController());
   AuthController authController = Get.put(AuthController());
+  MainController mainController = Get.put(MainController());
   ItemScrollController itemScrollController = ItemScrollController();
   var isLoading = false;
   void getImageLikes() async {
+    mainController.postCommentsCount = [].obs;
     userController.likes.value = [];
     userController.isLikedByUser.value = [];
     setState(() {
@@ -37,6 +41,11 @@ class _ImagePostListState extends State<ImagePostList> {
 
       userController.likes.value.add(res.body);
       userController.isLikedByUser.value.add(likedByUserRes.body);
+
+      http.Response commentCountRes =
+          await get("$url/comments/count/${element["id"]}");
+
+      mainController.postCommentsCount.add(commentCountRes.body);
     }
 
     setState(() {
@@ -236,12 +245,26 @@ class _ImagePostListState extends State<ImagePostList> {
                                     SizedBox(
                                       width: Get.width * 0.1,
                                     ),
-                                    const Icon(Icons.chat_bubble_outline),
+                                    InkWell(
+                                        onTap: () {
+                                          Navigator.push(context,
+                                              MaterialPageRoute(
+                                                  builder: (context) {
+                                            return PostComments(
+                                                postId: widget.images[index]
+                                                    ["id"],
+                                                index: index);
+                                          }));
+                                        },
+                                        child: const Icon(
+                                            Icons.chat_bubble_outline)),
                                     const SizedBox(
                                       width: 3,
                                     ),
-                                    const Text(
-                                      "0",
+                                    Obx(
+                                      () => Text(
+                                        mainController.postCommentsCount[index],
+                                      ),
                                     ),
                                     SizedBox(
                                       width: Get.width * 0.1,

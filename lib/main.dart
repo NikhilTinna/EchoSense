@@ -31,7 +31,6 @@ void main() async {
     authController.token.value = sp.getString("token")!;
     authController.userId.value = authController.decodedToken.value["id"];
   }
-  sp.clear();
 
   runApp(const MainApp());
 }

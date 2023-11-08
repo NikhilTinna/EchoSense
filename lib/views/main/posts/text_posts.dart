@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:social_media/controllers/authController.dart';
 import 'package:http/http.dart' as http;
+import 'package:social_media/controllers/mainController.dart';
+import 'package:social_media/views/main/random/post_comments.dart';
 
 import '../../../constants/REST_api.dart';
 import '../../../constants/global.dart';
@@ -19,6 +21,7 @@ class TextPosts extends StatefulWidget {
 class _TextPostsState extends State<TextPosts> {
   UserController userController = Get.put(UserController());
   AuthController authController = Get.put(AuthController());
+  MainController mainController = Get.put(MainController());
   List<dynamic> textPosts = [];
   var isLoading = false;
 
@@ -26,6 +29,7 @@ class _TextPostsState extends State<TextPosts> {
     setState(() {
       isLoading = true;
     });
+    mainController.postCommentsCount = [].obs;
     userController.likes.value = [];
     userController.isLikedByUser.value = [];
     for (int i = 0; i < userController.currentUserPosts.value.length; i++) {
@@ -44,6 +48,11 @@ class _TextPostsState extends State<TextPosts> {
 
       userController.likes.value.add(res.body);
       userController.isLikedByUser.value.add(likedByUserRes.body);
+
+      http.Response commentCountRes =
+          await get("$url/comments/count/${element["id"]}");
+
+      mainController.postCommentsCount.add(commentCountRes.body);
     }
     print(userController.likes.value);
     print(userController.isLikedByUser.value);
@@ -218,12 +227,26 @@ class _TextPostsState extends State<TextPosts> {
                                     SizedBox(
                                       width: Get.width * 0.1,
                                     ),
-                                    const Icon(Icons.chat_bubble_outline),
+                                    InkWell(
+                                        onTap: () {
+                                          Navigator.push(context,
+                                              MaterialPageRoute(
+                                            builder: (context) {
+                                              return PostComments(
+                                                  postId: textPosts[index]
+                                                      ["id"],
+                                                  index: index);
+                                            },
+                                          ));
+                                        },
+                                        child: Icon(Icons.chat_bubble_outline)),
                                     const SizedBox(
                                       width: 3,
                                     ),
-                                    const Text(
-                                      "0",
+                                    Obx(
+                                      () => Text(
+                                        mainController.postCommentsCount[index],
+                                      ),
                                     ),
                                     SizedBox(
                                       width: Get.width * 0.1,
