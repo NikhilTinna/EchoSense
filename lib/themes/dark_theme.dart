@@ -5,7 +5,7 @@ ThemeData darkTheme = ThemeData(
     fontFamily: GoogleFonts.roboto().fontFamily,
     brightness: Brightness.dark,
     colorScheme: const ColorScheme.dark(
-        background: Color(0xff15202B),
+        background: Color.fromARGB(255, 1, 6, 12),
         primary: Colors.white,
         secondary: Colors.purple,
         error: Colors.red,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:social_media/constants/global.dart';
 import 'package:social_media/views/main/home.dart';
 import 'package:social_media/views/main/navigation_bar.dart';
 import '../../constants/REST_api.dart';
@@ -119,7 +120,7 @@ class _OTPState extends State<OTP> {
                         showErrorToast("Invalid OTP Entered");
                       } else {
                         http.Response res = await post(
-                            endpoint: "http://10.0.2.2:3000/user/signup",
+                            endpoint: "$url/user/signup",
                             body:
                                 jsonEncode(authController.unverifiedUser.value),
                             success: () {

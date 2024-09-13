@@ -34,25 +34,25 @@ userRouter.post("/verify", async (req, res) => {
   try {
     const { name, username, email, password } = req.body;
 
-    const existingUsername = await prisma.user.findFirst({
-      where: {
-        username,
-      },
-    });
-    if (existingUsername) {
-      return res.status(400).json({ msg: "Username is already taken!" });
-    }
+    // const existingUsername = await prisma.user.findFirst({
+    //   where: {
+    //     username,
+    //   },
+    // });
+    // if (existingUsername) {
+    //   return res.status(400).json({ msg: "Username is already taken!" });
+    // }
 
-    const existingUser = await prisma.user.findFirst({
-      where: {
-        email,
-      },
-    });
-    if (existingUser) {
-      return res
-        .status(400)
-        .json({ msg: "User with same email already exists!" });
-    }
+    // const existingUser = await prisma.user.findFirst({
+    //   where: {
+    //     email,
+    //   },
+    // });
+    // if (existingUser) {
+    //   return res
+    //     .status(400)
+    //     .json({ msg: "User with same email already exists!" });
+    // }
 
     const randomNumber = Math.floor(1000 + Math.random() * 9000);
     const transporter = nodemailer.createTransport({

@@ -184,8 +184,7 @@ class _SignupState extends State<Signup> {
                                   ),
                                   onPressed: () async {
                                     http.Response res = await post(
-                                        endpoint:
-                                            "http://10.0.2.2:3000/user/verify",
+                                        endpoint: "$url/user/verify",
                                         body: jsonEncode({
                                           "name": nameController.text,
                                           "username": usernameController.text,

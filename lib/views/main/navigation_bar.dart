@@ -6,6 +6,7 @@ import 'package:social_media/views/main/notifications.dart';
 import 'package:social_media/views/main/profile.dart';
 import 'package:social_media/views/main/random/chats/chat_list.dart';
 import 'package:social_media/views/main/search.dart';
+import 'package:social_media/views/main/ai_screen.dart'; // Import the AI screen
 
 import '../../controllers/authController.dart';
 
@@ -17,6 +18,7 @@ class UserNavigationBar extends StatelessWidget {
     const Search(),
     const AddPost(),
     const ChatList(),
+    const AIScreen(), // Add AI screen here
     const Profile()
   ];
 
@@ -37,6 +39,11 @@ class UserNavigationBar extends StatelessWidget {
             currentIndex: controller.userIndex.value,
             onTap: (userIndex) {
               controller.userIndex.value = userIndex;
+              // Add condition to navigate to the AI screen
+              if (userIndex == 4) {
+                // Navigate to the AI screen
+                Get.to(() => AIScreen());
+              }
             },
             items: const [
               BottomNavigationBarItem(
@@ -54,6 +61,11 @@ class UserNavigationBar extends StatelessWidget {
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.chat),
+                label: '',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(
+                    Icons.science), // Use a different icon for the AI screen
                 label: '',
               ),
               BottomNavigationBarItem(
